@@ -87,14 +87,36 @@ Page({
       const result = await getCollections();
       
       if (result && result.length > 0) {
-        const collections = result.filter(c => c.featuredAsset).map(item => ({
-          id: item.id,
-          name: item.name,
-          slug: item.slug,
-          image: item.featuredAsset && item.featuredAsset.preview || '',
-          count: item.productCount || 0,
-        }));
-        this.setData({ collections });
+        const parentCollections = result.filter(c => !c.parent || c.parent.id === '1' || c.parent.name === '__root_collection__');
+        
+        const sortedCollections = [];
+        parentCollections.forEach(parent => {
+          if (parent.featuredAsset) {
+            sortedCollections.push({
+              id: parent.id,
+              name: parent.name,
+              slug: parent.slug,
+              image: parent.featuredAsset && parent.featuredAsset.preview || '',
+              count: parent.productCount || 0,
+            });
+          }
+          
+          if (parent.children && parent.children.length > 0) {
+            parent.children.forEach(child => {
+              if (child.featuredAsset) {
+                sortedCollections.push({
+                  id: child.id,
+                  name: child.name,
+                  slug: child.slug,
+                  image: child.featuredAsset && child.featuredAsset.preview || '',
+                  count: child.productCount || 0,
+                });
+              }
+            });
+          }
+        });
+        
+        this.setData({ collections: sortedCollections });
       } else {
         const mockCollections = [
           { id: 1, name: '紧固件', slug: 'fasteners', image: 'https://via.placeholder.com/300x300/165DFF/ffffff?text=紧固件', count: 128 },

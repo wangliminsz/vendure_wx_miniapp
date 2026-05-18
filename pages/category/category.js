@@ -48,20 +48,47 @@ Page({
 
   async loadCategories() {
     try {
+      console.log('========== Loading categories from Vendure ==========');
       const collections = await getCollections();
-      const categories = collections.map(c => ({
-        id: c.id,
-        name: c.name,
-        slug: c.slug,
-      }));
-
-      this.setData({
-        categories: categories.length > 0 ? categories : config.CATEGORIES,
+      console.log('Raw collections from Vendure:', JSON.stringify(collections, null, 2));
+      
+      if (collections.length === 0) {
+        console.log('No collections returned from Vendure, using default categories');
+        this.setData({ categories: config.CATEGORIES });
+        return;
+      }
+      
+      const parentCollections = collections.filter(c => !c.parent || c.parent.id === '1' || c.parent.name === '__root_collection__');
+      console.log('Parent collections:', JSON.stringify(parentCollections, null, 2));
+      
+      const sortedCategories = [];
+      parentCollections.forEach(parent => {
+        sortedCategories.push({
+          id: parent.id,
+          name: parent.name,
+          slug: parent.slug,
+        });
+        
+        if (parent.children && parent.children.length > 0) {
+          parent.children.forEach(child => {
+            sortedCategories.push({
+              id: child.id,
+              name: child.name,
+              slug: child.slug,
+            });
+          });
+        }
       });
 
-      if (categories.length > 0) {
-        this.setData({ currentSlug: categories[0].slug });
-        this.loadProductsBySlug(categories[0].slug);
+      console.log('Sorted categories:', JSON.stringify(sortedCategories, null, 2));
+      
+      this.setData({
+        categories: sortedCategories,
+      });
+
+      if (sortedCategories.length > 0 && !this.data.currentSlug) {
+        this.setData({ currentSlug: sortedCategories[0].slug });
+        this.loadProductsBySlug(sortedCategories[0].slug);
       }
     } catch (error) {
       console.error('Failed to load categories:', error);
@@ -142,10 +169,6 @@ Page({
   },
 
   async loadProductsBySlug(slug) {
-    if (this.data.loading) {
-      return;
-    }
-
     this.setData({
       currentSlug: slug,
       products: [],
@@ -254,9 +277,55 @@ Page({
   },
 
   loadMore() {
-    const category = this.data.categories[this.data.activeCategory];
-    if (category) {
-      this.loadProducts(category.id);
+    if (this.data.currentSlug) {
+      this.loadProductsBySlugMore(this.data.currentSlug);
+    }
+  },
+
+  async loadProductsBySlugMore(slug) {
+    if (this.data.loading || !this.data.hasMore) return;
+
+    this.setData({ loading: true });
+
+    try {
+      const page = this.data.currentPage + 1;
+      const result = await getCollection(slug, page, this.data.pageSize);
+
+      if (result && result.productVariants && result.productVariants.items.length > 0) {
+        const newProducts = result.productVariants.items.map(item => {
+          const product = item.product || {};
+          const variantImage = item.featuredAsset && item.featuredAsset.preview;
+          const productImage = product.featuredAsset && product.featuredAsset.preview;
+          
+          return {
+            id: item.id,
+            name: item.name,
+            brand: product.name || '',
+            sku: item.sku || '',
+            price: formatPrice(item.priceWithTax, item.currencyCode).replace('¥', ''),
+            volumePrice: (item.priceWithTax * 0.85 / 100).toFixed(2),
+            image: variantImage || productImage || 'https://via.placeholder.com/200x200',
+            stock: item.stockLevel || '充足',
+            moq: '1',
+            leadTime: '3-5天',
+          };
+        });
+
+        const existingIds = this.data.products.map(p => p.id);
+        const uniqueProducts = newProducts.filter(p => !existingIds.includes(p.id));
+
+        this.setData({
+          products: [...this.data.products, ...uniqueProducts],
+          currentPage: page,
+          hasMore: uniqueProducts.length >= this.data.pageSize,
+        });
+      } else {
+        this.setData({ hasMore: false });
+      }
+    } catch (error) {
+      console.error('Failed to load more products:', error);
+    } finally {
+      this.setData({ loading: false });
     }
   },
 

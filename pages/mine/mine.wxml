@@ -61,22 +61,22 @@
   <view class="section">
     <view class="menu-list">
       <view class="menu-item" bindtap="goToPage" data-url="/pages/address/address">
-        <image src="/static/icons/menu-address.png" mode="aspectFit" class="menu-icon"></image>
+        <!-- <image src="/static/icons/menu-address.png" mode="aspectFit" class="menu-icon"></image> -->
         <text class="menu-text">收货地址</text>
         <text class="menu-arrow">></text>
       </view>
       <view class="menu-item" bindtap="goToPage" data-url="/pages/invoice/invoice">
-        <image src="/static/icons/menu-invoice.png" mode="aspectFit" class="menu-icon"></image>
+        <!-- <image src="/static/icons/menu-invoice.png" mode="aspectFit" class="menu-icon"></image> -->
         <text class="menu-text">发票管理</text>
         <text class="menu-arrow">></text>
       </view>
       <view class="menu-item" bindtap="goToPage" data-url="/pages/approval/approval">
-        <image src="/static/icons/menu-approval.png" mode="aspectFit" class="menu-icon"></image>
+        <!-- <image src="/static/icons/menu-approval.png" mode="aspectFit" class="menu-icon"></image> -->
         <text class="menu-text">采购审批</text>
         <text class="menu-arrow">></text>
       </view>
       <view class="menu-item" bindtap="goToPage" data-url="/pages/statement/statement">
-        <image src="/static/icons/menu-statement.png" mode="aspectFit" class="menu-icon"></image>
+        <!-- <image src="/static/icons/menu-statement.png" mode="aspectFit" class="menu-icon"></image> -->
         <text class="menu-text">对账管理</text>
         <text class="menu-arrow">></text>
       </view>
@@ -87,12 +87,12 @@
   <view class="section">
     <view class="menu-list">
       <view class="menu-item" bindtap="goToPage" data-url="/pages/setting/setting">
-        <image src="/static/icons/menu-setting.png" mode="aspectFit" class="menu-icon"></image>
+        <!-- <image src="/static/icons/menu-setting.png" mode="aspectFit" class="menu-icon"></image> -->
         <text class="menu-text">设置</text>
         <text class="menu-arrow">></text>
       </view>
       <view class="menu-item" bindtap="contactService">
-        <image src="/static/icons/menu-service.png" mode="aspectFit" class="menu-icon"></image>
+        <!-- <image src="/static/icons/menu-service.png" mode="aspectFit" class="menu-icon"></image> -->
         <text class="menu-text">联系客服</text>
         <text class="menu-arrow">></text>
       </view>

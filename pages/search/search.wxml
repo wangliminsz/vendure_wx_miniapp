@@ -6,7 +6,7 @@
       <input
         type="text"
         class="search-input"
-        placeholder="搜索型号/品牌/物料编码"
+        placeholder="搜索型号/品牌/编码"
         value="{{searchKeyword}}"
         bindinput="onSearchInput"
         bindconfirm="onSearchConfirm"

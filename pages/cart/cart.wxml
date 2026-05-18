@@ -46,7 +46,7 @@
 
   <!-- 空状态 -->
   <view class="empty-state" wx:if="{{cartItems.length === 0}}">
-    <image src="/static/images/empty-cart.png" mode="aspectFit"></image>
+    <!-- <image src="/static/images/empty-cart.png" mode="aspectFit"></image> -->
     <text>采购车是空的</text>
     <button class="go-shopping-btn" bindtap="goShopping">去采购</button>
   </view>

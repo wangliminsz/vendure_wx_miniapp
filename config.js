@@ -25,17 +25,6 @@ const config = {
     MEDIUM: '?w=400&h=400&format=webp',
     LARGE: '?w=800&h=800&format=webp',
   },
-
-  CATEGORIES: [
-    { id: 1, name: '紧固件', icon: '/static/icons/category-fastener.png' },
-    { id: 2, name: '轴承', icon: '/static/icons/category-bearing.png' },
-    { id: 3, name: '工具', icon: '/static/icons/category-tool.png' },
-    { id: 4, name: '电气', icon: '/static/icons/category-electrical.png' },
-    { id: 5, name: '化工劳保', icon: '/static/icons/category-chemical.png' },
-    { id: 6, name: '密封件', icon: '/static/icons/category-seal.png' },
-    { id: 7, name: '进口专区', icon: '/static/icons/category-import.png' },
-    { id: 8, name: '企业定制', icon: '/static/icons/category-custom.png' },
-  ],
 };
 
 module.exports = config;

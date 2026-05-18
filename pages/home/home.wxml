@@ -24,7 +24,7 @@
         <view class="collection-info">
           <view class="collection-texts">
             <text class="collection-name">{{item.name}}</text>
-            <text class="collection-count">{{item.count}} 种商品</text>
+            <text class="collection-count">{{item.count}} Products</text>
           </view>
         </view>
       </view>

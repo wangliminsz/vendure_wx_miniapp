@@ -8,6 +8,7 @@ wx_h5_support/
 # ==============================================
 # 微信开发者工具本地配置（包含个人登录信息、本地项目设置）
 project.private.config.json
+project.config.json
 # VSCode 编辑器配置（你项目里的 .vscode 文件夹）
 .vscode/
 # WebStorm/IDEA 等其他IDE配置
