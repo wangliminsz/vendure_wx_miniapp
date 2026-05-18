@@ -1,0 +1,69 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/category/category",
+    "pages/cart/cart",
+    "pages/mine/mine",
+    "pages/product/product",
+    "pages/search/search",
+    "pages/orders/orders",
+    "pages/orderDetail/orderDetail",
+    "pages/address/address",
+    "pages/checkout/checkout",
+    "pages/login/login"
+  ],
+
+  "tabBar": { 
+    "color": "#999999",
+    "selectedColor": "#1296db",
+    "borderStyle": "white",
+    "backgroundColor": "#F5F5F5",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "static/tabbar/home-n.png",
+        "selectedIconPath": "static/tabbar/home-a.png"
+      },
+      {
+        "pagePath": "pages/category/category",
+        "text": "分类",
+        "iconPath": "static/tabbar/category-n.png",
+        "selectedIconPath": "static/tabbar/category-a.png"
+      },
+      {
+        "pagePath": "pages/cart/cart",
+        "text": "采购车",
+        "iconPath": "static/tabbar/cart-n.png",
+        "selectedIconPath": "static/tabbar/cart-a.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "static/tabbar/mine-n.png",
+        "selectedIconPath": "static/tabbar/mine-a.png"
+      }
+    ]
+  },
+
+
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "优材工品",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#F2F3F5",
+    "enablePullDownRefresh": true,
+    "onReachBottomDistance": 50
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于查找附近仓库"
+    }
+  },
+  "requiredPrivateInfos": [
+    "chooseLocation"
+  ]
+}

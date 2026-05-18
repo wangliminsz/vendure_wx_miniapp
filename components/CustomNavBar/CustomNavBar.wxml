@@ -1,0 +1,8 @@
+<view class="custom-nav-bar">
+  <view class="nav-bar-status-bar" style="height: {{statusBarHeight}}px"></view>
+  <view class="nav-bar-content">
+    <text class="nav-title">{{title}}</text>
+
+  </view>
+</view>
+<view class="nav-bar-placeholder" style="height: {{navBarHeight}}px"></view>

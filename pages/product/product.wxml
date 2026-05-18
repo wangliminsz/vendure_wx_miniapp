@@ -1,0 +1,98 @@
+<view class="container">
+  <!-- 商品图片轮播 -->
+  <view class="product-images">
+    <swiper indicator-dots autoplay circular>
+      <swiper-item wx:for="{{product.images}}" wx:key="index">
+        <image src="{{item}}" mode="aspectFit" class="product-image"></image>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 商品基本信息 -->
+  <view class="product-base-info">
+    <view class="price-section">
+      <text class="product-price">¥{{product.price}}</text>
+      <text class="product-volume-price" wx:if="{{product.volumePrice}}">批量价: ¥{{product.volumePrice}}</text>
+      <text class="product-b2b-price" wx:if="{{product.b2bPrice}}">企业价: ¥{{product.b2bPrice}}</text>
+    </view>
+    <view class="product-tags">
+      <text class="tag tag-success" wx:if="{{product.inStock}}">有货</text>
+      <text class="tag tag-primary" wx:if="{{product.stockLevel < 100}}">库存紧张</text>
+      <text class="tag">现货</text>
+    </view>
+  </view>
+
+  <!-- 型号/品牌信息 -->
+  <view class="product-detail-card">
+    <view class="detail-row">
+      <text class="detail-label">型号</text>
+      <text class="detail-value">{{product.model || 'N/A'}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">品牌</text>
+      <text class="detail-value">{{product.brand || 'N/A'}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">物料编码</text>
+      <text class="detail-value">{{product.sku || 'N/A'}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">起订量</text>
+      <text class="detail-value">{{product.moq || '1'}} 件</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">交期</text>
+      <text class="detail-value">{{product.leadTime || '3-5天'}}</text>
+    </view>
+  </view>
+
+  <!-- 参数信息 -->
+  <view class="product-detail-card">
+    <view class="detail-title">参数信息</view>
+    <view class="detail-row" wx:for="{{product.specs}}" wx:key="index">
+      <text class="detail-label">{{item.label}}</text>
+      <text class="detail-value">{{item.value}}</text>
+    </view>
+  </view>
+
+  <!-- 数量选择 -->
+  <view class="product-detail-card">
+    <view class="quantity-section">
+      <text class="quantity-label">购买数量</text>
+      <view class="quantity-control">
+        <view class="quantity-btn" bindtap="onMinus">
+          <text>-</text>
+        </view>
+        <input type="number" class="quantity-input" value="{{quantity}}" bindchange="onQuantityChange" />
+        <view class="quantity-btn" bindtap="onPlus">
+          <text>+</text>
+        </view>
+      </view>
+      <text class="moq-hint">起订量: {{product.moq || 1}}件</text>
+    </view>
+  </view>
+
+  <!-- 商品描述 -->
+  <view class="product-detail-card">
+    <view class="detail-title">商品说明</view>
+    <rich-text nodes="{{product.description}}"></rich-text>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="action-icons">
+      <view class="action-icon-item" bindtap="goToHome">
+        <image src="/static/icons/home.png" mode="aspectFit"></image>
+        <text>首页</text>
+      </view>
+      <view class="action-icon-item" bindtap="toggleFavorite">
+        <image src="{{isFavorite ? '/static/icons/favorite-active.png' : '/static/icons/favorite.png'}}" mode="aspectFit"></image>
+        <text>收藏</text>
+      </view>
+    </view>
+    <view class="action-buttons">
+      <button class="btn-add-cart" bindtap="onAddToCart">加入采购车</button>
+      <button class="btn-buy-now" bindtap="onBuyNow">立即下单</button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,39 @@
+<view class="container">
+  <!-- 地址列表 -->
+  <view class="address-list">
+    <view class="address-item {{item.isDefault ? 'default' : ''}}" wx:for="{{addresses}}" wx:key="id">
+      <view class="address-content" bindtap="onSelectAddress" data-id="{{item.id}}">
+        <view class="address-header">
+          <text class="receiver">{{item.receiver}}</text>
+          <text class="phone">{{item.phone}}</text>
+          <text class="default-tag" wx:if="{{item.isDefault}}">默认</text>
+        </view>
+        <text class="address-detail">{{item.province}} {{item.city}} {{item.district}} {{item.detail}}</text>
+      </view>
+      <view class="address-actions">
+        <view class="action-item" bindtap="onEditAddress" data-id="{{item.id}}">
+          <image src="/static/icons/edit.png" mode="aspectFit"></image>
+          <text>编辑</text>
+        </view>
+        <view class="action-item" bindtap="onDeleteAddress" data-id="{{item.id}}">
+          <image src="/static/icons/delete.png" mode="aspectFit"></image>
+          <text>删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{addresses.length === 0}}">
+    <image src="/static/images/empty-address.png" mode="aspectFit"></image>
+    <text>暂无收货地址</text>
+  </view>
+
+  <!-- 添加地址按钮 -->
+  <view class="bottom-bar">
+    <button class="add-address-btn" bindtap="onAddAddress">
+      <image src="/static/icons/add.png" mode="aspectFit"></image>
+      <text>添加新地址</text>
+    </button>
+  </view>
+</view>

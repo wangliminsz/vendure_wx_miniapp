@@ -1,0 +1,37 @@
+<view class="container">
+  <view class="hero-section">
+    <swiper indicator-dots autoplay interval="{{bannerInterval}}" circular class="hero-swiper">
+      <swiper-item wx:for="{{banners}}" wx:key="index">
+        <image src="{{item.image}}" mode="aspectFill" class="hero-image"></image>
+        <view class="hero-overlay">
+          <text class="hero-title">{{item.title}}</text>
+          <text class="hero-subtitle">{{item.subtitle}}</text>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <view class="collections-section">
+    <view wx:if="{{collectionsLoading}}" class="loading">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:else class="collections-grid">
+      <view class="collection-card" wx:for="{{collections}}" wx:key="id" bindtap="onCollectionTap" data-id="{{item.id}}" data-slug="{{item.slug}}">
+        <view class="collection-image-wrapper">
+          <image src="{{item.image}}" mode="aspectFill" class="collection-image"></image>
+        </view>
+        <view class="collection-info">
+          <view class="collection-texts">
+            <text class="collection-name">{{item.name}}</text>
+            <text class="collection-count">{{item.count}} 种商品</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{!collectionsLoading && collections.length === 0}}" class="empty">
+      <text>暂无分类数据</text>
+    </view>
+  </view>
+</view>

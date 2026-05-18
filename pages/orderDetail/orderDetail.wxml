@@ -1,0 +1,92 @@
+<view class="container">
+  <!-- 订单状态 -->
+  <view class="order-status-card status-{{order.state}}">
+    <text class="status-text">{{getStatusText(order.state)}}</text>
+    <text class="status-hint">{{getStatusHint(order.state)}}</text>
+  </view>
+
+  <!-- 收货地址 -->
+  <view class="address-card">
+    <image src="/static/icons/location.png" mode="aspectFit" class="address-icon"></image>
+    <view class="address-info">
+      <view class="address-header">
+        <text class="receiver">{{order.address && order.address.receiver || '张三'}}</text>
+        <text class="phone">{{order.address && order.address.phone || '138****8888'}}</text>
+      </view>
+      <text class="address-detail">{{order.address && order.address.detail || '广东省深圳市南山区科技园南路XX号'}}</text>
+    </view>
+  </view>
+
+  <!-- 商品列表 -->
+  <view class="product-list-card">
+    <view class="card-header">
+      <text class="card-title">商品信息</text>
+    </view>
+    <view class="product-list">
+      <view class="product-item" wx:for="{{order.products}}" wx:key="index">
+        <image src="{{item.image}}" mode="aspectFill" class="product-image"></image>
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <text class="product-sku">料号: {{item.sku}}</text>
+          <view class="product-meta">
+            <text class="product-brand">{{item.brand}}</text>
+            <text class="product-moq">起订: {{item.moq}}</text>
+          </view>
+        </view>
+        <view class="product-right">
+          <text class="product-price">¥{{item.price}}</text>
+          <text class="product-qty">x{{item.quantity}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="order-info-card">
+    <view class="info-row">
+      <text class="info-label">订单编号</text>
+      <text class="info-value">{{order.code}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">下单时间</text>
+      <text class="info-value">{{order.createdAt}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">支付方式</text>
+      <text class="info-value">{{order.paymentMethod || '在线支付'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">配送方式</text>
+      <text class="info-value">{{order.shippingMethod || '快递配送'}}</text>
+    </view>
+  </view>
+
+  <!-- 价格明细 -->
+  <view class="price-detail-card">
+    <view class="price-row">
+      <text class="price-label">商品金额</text>
+      <text class="price-value">¥{{order.goodsAmount || '0.00'}}</text>
+    </view>
+    <view class="price-row">
+      <text class="price-label">运费</text>
+      <text class="price-value">¥{{order.shippingFee || '0.00'}}</text>
+    </view>
+    <view class="price-row">
+      <text class="price-label">优惠</text>
+      <text class="price-value discount">-¥{{order.discount || '0.00'}}</text>
+    </view>
+    <view class="price-row total">
+      <text class="price-label">合计</text>
+      <text class="price-value total">¥{{order.total || '0.00'}}</text>
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-bar">
+    <button class="action-btn" bindtap="contactService">联系客服</button>
+    <view class="action-buttons">
+      <button class="action-btn secondary" wx:if="{{order.state === 'shipped'}}" bindtap="onConfirmReceive">确认收货</button>
+      <button class="action-btn primary" wx:if="{{order.state === 'paid'}}" bindtap="onPayNow">立即支付</button>
+    </view>
+  </view>
+</view>
