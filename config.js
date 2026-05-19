@@ -1,4 +1,7 @@
 const config = {
+
+  baseUrl: 'http://192.168.0.51:3000/shop-api',
+
   development: {
     API_URL: 'http://192.168.0.51:3000/shop-api',
     GRAPHQL_URL: 'http://192.168.0.51:3000',
@@ -25,6 +28,12 @@ const config = {
     MEDIUM: '?w=400&h=400&format=webp',
     LARGE: '?w=800&h=800&format=webp',
   },
+
+  fastapiUrl: "https://bkkapi.favor100.site",
+
+  avatarImg: "/static/images/get_avatar.png",
+  cloudEnvId: "bkkschool-1304214433-4bo349633e7",
+  
 };
 
 module.exports = config;

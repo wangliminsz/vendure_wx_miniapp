@@ -7,22 +7,22 @@
 
 .search-bar {
   background-color: #165DFF;
-  padding: 16rpx 32rpx 24rpx;
+  /* padding: 16rpx 32rpx 24rpx; */
 }
 
 .search-input {
   background-color: #ffffff;
-  border-radius: 36rpx;
+  /* border-radius: 36rpx; */
   height: 72rpx;
   display: flex;
   align-items: center;
-  padding: 0 32rpx;
+  /* padding: 0 32rpx; */
 }
 
 .search-input image {
   width: 32rpx;
   height: 32rpx;
-  opacity: 0.5;
+  /* opacity: 0.8; */
 }
 
 .search-input input {
@@ -232,8 +232,8 @@
   width: 90rpx;
   height: 90rpx;
   background-color: transparent;
-  border: 2rpx solid rgba(100, 100, 100, 0.5);
-  border-radius: 50%;
+  /* border: 2rpx solid rgba(100, 100, 100, 0.5); */
+  /* border-radius: 50%; */
   display: flex;
   align-items: center;
   justify-content: center;

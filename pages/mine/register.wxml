@@ -1,0 +1,41 @@
+<!--index.wxml-->
+<view class="section">
+  <!-- <view class="page-title">我的信息</view> -->
+
+  <!-- 头像行 -->
+  <view class="myavatar-wrapper">
+    <text class="nickname-label">您的头像</text>
+    <button class="avatar_button" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+      <image class="avatar" src="{{userAvatarUrl}}"></image>
+    </button>
+  </view>
+
+  <!-- 昵称行（红框重点对齐） -->
+  <view class="nickname-wrapper">
+    <text class="nickname-label">您的昵称</text>
+    <input value="{{userNickName}}" type="nickname" class="nickname-input" placeholder="请输入昵称" placeholder-class="nickname-placeholder" bind:change="onInputChange" />
+  </view>
+
+  <!-- 协议勾选 -->
+  <view class="agreement-container">
+    <checkbox-group bindchange="checkboxChange">
+      <label class="checkbox">
+        <checkbox value="agreed" checked="{{false}}" style="margin-right: 5px;" />同意
+        <navigator url="/pages/userAgreement/userAgreement" class="link">用户服务协议</navigator>
+        和
+        <navigator url="/pages/privacyPolicy/privacyPolicy" class="link">隐私政策</navigator>
+      </label>
+    </checkbox-group>
+  </view>
+
+  <!-- 提交按钮 -->
+  <button class="loginbtn" bindtap="bindSubmit" disabled="{{!isAgreed}}">提交信息</button>
+
+  <!-- 底部协议链接 -->
+  <!-- <view class="user_container">
+    <navigator url="/pages/userAgreement/userAgreement" class="link">用户服务协议</navigator>
+    <navigator url="/pages/privacyPolicy/privacyPolicy" class="link">隐私政策</navigator>
+    <view style="margin-top:10px;"></view>
+  </view> -->
+
+</view>

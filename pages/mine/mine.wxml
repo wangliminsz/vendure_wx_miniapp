@@ -1,106 +1,65 @@
-<view class="container">
-  <!-- 用户信息头部 -->
-  <view class="user-header">
-    <view class="user-info" bindtap="onUserInfoTap">
-      <image src="{{userInfo.avatar || '/static/images/default-avatar.png'}}" class="user-avatar" mode="aspectFill"></image>
-      <view class="user-detail">
-        <text class="user-name">{{userInfo.name || '点击登录'}}</text>
-        <text class="user-company" wx:if="{{userInfo.company}}">{{userInfo.company}}</text>
-        <text class="user-company" wx:else>企业用户</text>
-      </view>
-      <text class="user-arrow">></text>
-    </view>
-  </view>
+<view class='section'>
 
-  <!-- 企业信息卡片 -->
-  <view class="company-card">
-    <view class="company-info-row">
-      <text class="company-label">企业名称</text>
-      <text class="company-value">{{customerInfo.company || '未认证'}}</text>
-    </view>
-    <view class="company-info-row">
-      <text class="company-label">企业等级</text>
-      <text class="company-value level">{{customerInfo.level || '普通会员'}}</text>
-    </view>
-    <view class="company-info-row">
-      <text class="company-label">账期额度</text>
-      <text class="company-value">¥{{customerInfo.creditLimit || '0.00'}}</text>
-    </view>
-  </view>
-
-  <!-- 我的订单 -->
-  <view class="section">
-    <view class="section-header">
-      <text class="section-title">我的订单</text>
-      <view class="section-more" bindtap="goToOrders">
-        <text>全部订单</text>
-        <text class="arrow">></text>
-      </view>
-    </view>
-    <view class="order-tabs">
-      <view class="order-tab" bindtap="goToOrders" data-status="pending">
-        <image src="/static/icons/order-pending.png" mode="aspectFit"></image>
-        <text>待审批</text>
-      </view>
-      <view class="order-tab" bindtap="goToOrders" data-status="paid">
-        <image src="/static/icons/order-paid.png" mode="aspectFit"></image>
-        <text>待付款</text>
-      </view>
-      <view class="order-tab" bindtap="goToOrders" data-status="shipped">
-        <image src="/static/icons/order-shipped.png" mode="aspectFit"></image>
-        <text>待发货</text>
-      </view>
-      <view class="order-tab" bindtap="goToOrders" data-status="completed">
-        <image src="/static/icons/order-completed.png" mode="aspectFit"></image>
-        <text>已完成</text>
+  <!-- 头像和名称 -->
+  <view class='broker'>
+    <view class='bd'>
+      <image class="broker-head" src="{{userAvatarUrl}}"> </image>
+      <view class='name'>
+        <view wx:if="{{!userNickName}}" class='txt'>
+          <text>点击按钮填写信息 </text>
+        </view>
+        <view wx:else class='txt'>
+          <text>{{userNickName}} </text>
+        </view>
       </view>
     </view>
   </view>
 
-  <!-- 功能菜单 -->
-  <view class="section">
-    <view class="menu-list">
-      <view class="menu-item" bindtap="goToPage" data-url="/pages/address/address">
-        <!-- <image src="/static/icons/menu-address.png" mode="aspectFit" class="menu-icon"></image> -->
-        <text class="menu-text">收货地址</text>
-        <text class="menu-arrow">></text>
-      </view>
-      <view class="menu-item" bindtap="goToPage" data-url="/pages/invoice/invoice">
-        <!-- <image src="/static/icons/menu-invoice.png" mode="aspectFit" class="menu-icon"></image> -->
-        <text class="menu-text">发票管理</text>
-        <text class="menu-arrow">></text>
-      </view>
-      <view class="menu-item" bindtap="goToPage" data-url="/pages/approval/approval">
-        <!-- <image src="/static/icons/menu-approval.png" mode="aspectFit" class="menu-icon"></image> -->
-        <text class="menu-text">采购审批</text>
-        <text class="menu-arrow">></text>
-      </view>
-      <view class="menu-item" bindtap="goToPage" data-url="/pages/statement/statement">
-        <!-- <image src="/static/icons/menu-statement.png" mode="aspectFit" class="menu-icon"></image> -->
-        <text class="menu-text">对账管理</text>
-        <text class="menu-arrow">></text>
-      </view>
+  <!-- button 按钮 -->
+  <view class='method'>
+    <view class='name'>
+      <view class='txt'><text class='ft24'></text></view>
     </view>
+
+    <!--之前 新版登录-->
+    <!-- <view class="bd">
+      <button class="loginbtn" bindtap="updateUserInfo2"> 用户授权(新版)</button>
+    </view> -->
+    <!--之前 新版登录-->
+
+    <!--之前 新版登录-->
+    <view class="bd">
+      <!-- wx:if="{{canUserGetUserProfile}}" -->
+      <button class="loginbtn" bindtap="updateUserInfo2"> 用户授权(新版)</button>
+      <view style="margin-top: 20px;"></view>
+      <button class="returnbtn" bindtap="returnToHome">返回</button>
+    </view>
+
+
+
+    <view class="user_container">
+      <navigator url="/pages/userAgreement/userAgreement" class="link">用户服务协议</navigator>
+      <navigator url="/pages/privacyPolicy/privacyPolicy" class="link">隐私政策</navigator>
+      <view style="margin-top:10px;"></view>
+      
+    </view>
+
+
+
   </view>
 
-  <!-- 其他功能 -->
-  <view class="section">
-    <view class="menu-list">
-      <view class="menu-item" bindtap="goToPage" data-url="/pages/setting/setting">
-        <!-- <image src="/static/icons/menu-setting.png" mode="aspectFit" class="menu-icon"></image> -->
-        <text class="menu-text">设置</text>
-        <text class="menu-arrow">></text>
-      </view>
-      <view class="menu-item" bindtap="contactService">
-        <!-- <image src="/static/icons/menu-service.png" mode="aspectFit" class="menu-icon"></image> -->
-        <text class="menu-text">联系客服</text>
-        <text class="menu-arrow">></text>
-      </view>
-    </view>
-  </view>
 
-  <!-- 退出登录 -->
-  <view class="logout-section" wx:if="{{isLoggedIn}}">
-    <button class="logout-btn" bindtap="onLogout">退出登录</button>
-  </view>
+
+
+
 </view>
+
+
+
+<!-- <text>
+      {{userInfoExist}} \n
+      {{userOpenId}} \n
+      {{userAvatarUrl}} \n
+      {{userNickName}} \n
+      {{userMobile}}
+    </text> -->

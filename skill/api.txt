@@ -1,0 +1,57 @@
+~ 需要：封装一个全局的 request 方法，每次发请求时，自动从 wx.getStorageSync('vendure-auth-token') 读出值，并塞进 Header 的 Authorization: Bearer <token> 里
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+POST {{baseUrl}}
+Content-Type: application/json
+X-Request-Type: GraphQL
+
+mutation AuthenticateWithWechat($openId: String!, $nickname: String, $lastName: String, $phoneNumber: String) {
+  authenticate(input: {
+    wechat: {
+      openId: $openId,
+      nickname: $nickname,
+      lastName: $lastName,
+      phoneNumber: $phoneNumber
+    }
+  }) {
+    ... on CurrentUser {
+      id
+      identifier
+    }
+  }
+}
+
+{
+  "openId": "ojaJ13YlqeIniIi0fOLtcHGf_test_03",
+  "nickname": "耶律大石",
+  "lastName": "山西晋中太谷喷涂公司",
+  "phoneNumber": "13800138000"
+}
+
+
+result:
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: vendure-auth-token
+Content-Language: en
+vendure-auth-token: 028fdc03e20f16d33ec1fc1d8a6355af5682d89b9233d945719929e6b23bb51b
+cache-control: no-store
+Content-Type: application/json; charset=utf-8
+Content-Length: 106
+ETag: W/"6a-nxYp1dqlAqF7+r4AufAPBzZ19Tw"
+Date: Tue, 19 May 2026 09:00:39 GMT
+Connection: close
+
+{
+  "data": {
+    "authenticate": {
+      "id": "4",
+      "identifier": "ojaJ13YlqeIniIi0fOLtcHGf_test_03@wechat-virtual.local"
+    }
+  }
+}

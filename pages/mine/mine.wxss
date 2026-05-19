@@ -1,180 +1,124 @@
-.container {
-  min-height: 100vh;
-  background-color: #F2F3F5;
-}
 
-.user-header {
-  background: linear-gradient(135deg, #165DFF 0%, #4080FF 100%);
-  padding: 48rpx 32rpx;
-  padding-top: calc(48rpx + env(safe-area-inset-top));
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-}
-
-.user-avatar {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 60rpx;
-  background-color: #ffffff;
-  margin-right: 24rpx;
-}
-
-.user-detail {
-  flex: 1;
-}
-
-.user-name {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #ffffff;
-  display: block;
-  margin-bottom: 8rpx;
-}
-
-.user-company {
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.8);
-  display: block;
-}
-
-.user-arrow {
-  font-size: 32rpx;
-  color: #ffffff;
-}
-
-.company-card {
-  background-color: #ffffff;
-  margin: -32rpx 32rpx 16rpx;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-}
-
-.company-info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16rpx 0;
-  border-bottom: 1rpx solid #F2F3F5;
-}
-
-.company-info-row:last-child {
-  border-bottom: none;
-}
-
-.company-label {
-  font-size: 28rpx;
-  color: #86909C;
-}
-
-.company-value {
-  font-size: 28rpx;
-  color: #1D2129;
-  font-weight: 500;
-}
-
-.company-value.level {
-  color: #FF7D00;
-}
-
-.section {
-  background-color: #ffffff;
-  margin-bottom: 16rpx;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid #F2F3F5;
-}
-
-.section-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #1D2129;
-}
-
-.section-more {
-  display: flex;
-  align-items: center;
-  font-size: 26rpx;
-  color: #86909C;
-}
-
-.section-more .arrow {
-  margin-left: 8rpx;
-}
-
-.order-tabs {
-  display: flex;
-  padding: 32rpx 16rpx;
-}
-
-.order-tab {
-  flex: 1;
+.user_container {
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
+  justify-content: space-between;
+  padding: 200rpx 0;
+  box-sizing: border-box;
+  color: #000 !important
+} 
 
-.order-tab image {
-  width: 64rpx;
-  height: 64rpx;
-  margin-bottom: 12rpx;
-}
-
-.order-tab text {
-  font-size: 24rpx;
-  color: #1D2129;
-}
-
-.menu-list {
-  padding: 0 32rpx;
-}
-
-.menu-item {
+.wdxieyi{
   display: flex;
-  align-items: center;
-  padding: 32rpx 0;
-  border-bottom: 1rpx solid #F2F3F5;
+  flex-direction: row;
+  justify-content: start;
+  font-size: 24rpx;
+  padding-left: 100rpx;
 }
-
-.menu-item:last-child {
-  border-bottom: none;
+.avatar-wrapper{
+  padding: 20rpx;
 }
-
-.menu-icon {
-  width: 48rpx;
-  height: 48rpx;
-  margin-right: 24rpx;
-}
-
-.menu-text {
-  flex: 1;
-  font-size: 28rpx;
-  color: #1D2129;
-}
-
-.menu-arrow {
-  font-size: 28rpx;
-  color: #86909C;
-}
-
-.logout-section {
-  padding: 32rpx;
-}
-
-.logout-btn {
-  background-color: #ffffff;
-  color: #FF4D4F;
+.avatar-wrapper::after{
   border: none;
-  border-radius: 44rpx;
-  padding: 24rpx;
-  font-size: 32rpx;
-  font-weight: 500;
+}
+.section{
+  height: 100vh;
+  background: #fff;
+  padding-bottom: 30rpx;
+}
+/*broker 经纪人*/
+.broker{
+  padding-left: 30rpx;
+  margin-top: 0rpx;
+}
+.broker .bd{
+   padding: 30rpx;
+}
+ .broker-head{
+    width:90rpx; height: 90rpx;
+    border-radius: 50%;
+    float: left;   
+    margin-top: 0rpx;
+}
+.broker .name{   
+  margin-left: 150rpx;
+  text-align: left;
+  vertical-align: center;
+}
+ 
+.broker .txt{
+  font-size: 18px;
+  display: inline-block;
+  width: 75%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;  
+  text-align: left;
+  margin-top: 15rpx;
+}
+/*登录方式*/
+.method{
+  padding: 60rpx;
+}
+.method .name{
+  border-bottom: 1rpx solid #dadada;
+  position: relative;
+  height: 30rpx;
+  }
+.method .txt{
+  position: absolute;
+  width: 200rpx;
+  left: 50%;
+  margin-left: -100rpx;
+  background: #fff;
+  bottom:-25rpx;
+  text-align: center;
+  color: #999;
+}
+.method .bd{
+   text-align: center;
+   padding-top: 60rpx;
+   width: 100%;
+}
+/**/
+.cp{
+  margin-top: 15rpx;
+  padding: 10rpx 30rpx 10rpx 60rpx;
+}
+.cp .bd{
+  border-bottom: #dadada 1px solid;
+}
+.line{
+   height: 90rpx;
+   line-height: 90rpx;
+}
+.line .more{
+  float: right;
+  text-align: right;
+  color: #999;
+}
+
+button[size=mini] {
+display:inline-block;
+line-height:2.3;
+font-size:13px;
+padding:0 0.75em;
+
+}
+.loginbtn{
+  background-color: #165DFF;
+  color: #fff;
+}
+
+.returnbtn{
+  background-color: #999999;
+  color: #fff;
+  
+}
+
+.link {
+  color: #007AFF;
+  display: inline;
 }

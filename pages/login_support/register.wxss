@@ -1,0 +1,187 @@
+.user_container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 200rpx 0;
+  box-sizing: border-box;
+  color: #000 !important
+} 
+
+/**index.wxss**/
+page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #aaa;
+  width: 100%;
+}
+
+.loginbtn{
+  background-color: #00B26A;
+  color: #fff;
+  margin-top: 30px;
+}
+
+.scrollarea {
+  flex: 1;
+  overflow-y: hidden;
+}
+
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #aaa;
+  width: 80%;
+}
+
+.userinfo-avatar {
+  overflow: hidden;
+  width: 128rpx;
+  height: 128rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.usermotto {
+  margin-top: 100px;
+}
+
+.avatar-wrapper {
+  padding: 0;
+  width: 56px !important;
+  border-radius: 8px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.avatar {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+
+.myavatar-wrapper {
+  display: flex;
+  align-items: center;     /* 垂直居中 */
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  border-top: .5px solid rgba(0, 0, 0, 0.1);
+  border-bottom: .5px solid rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+.nickname-wrapper {
+  display: flex;
+  justify-content: space-between; /* Distribute space between items */
+  align-items: center; /* Align items vertically in the center */
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  border-top: .5px solid rgba(0, 0, 0, 0.1);
+  border-bottom: .5px solid rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+.nickname-label {
+  width: 105px;
+}
+
+.nickname-input {
+  flex: 1;
+  color: #333;
+  text-align: center; /* Align button text to the left */
+}
+
+.nickname-placeholder
+{
+  color: #707070 !important; 
+  font-size: 16px;
+  font-weight: normal; /* Make text bold */
+}
+
+.avatar_button {
+  flex: 1;
+  display: flex; /* Make the button a flex container */
+  justify-content: center; /* Center items horizontally */
+  border: none;
+  background: none;
+  color: #333;
+  cursor: pointer;
+  /* Additional styles for button text */
+  font-size: 16px; /* Adjust the font size */
+  font-weight: normal; /* Make text bold */
+  padding: 0px 10px; /* Add padding */
+  border-radius: 5px; /* Round the corners */
+  text-align: center; /* Align button text to the left */
+}
+
+.mobile_button {
+  flex: 1;
+  border: none;
+  background: none;
+  cursor: pointer;
+  /* Additional styles for button text */
+  color: #333;
+  font-size: 16px; /* Adjust the font size */
+  font-weight: normal; /* Make text bold */
+  padding: 0px 10px; /* Add padding */
+  border-radius: 5px; /* Round the corners */
+  text-align: center; /* Align button text to the left */
+}
+
+.no_mobile {
+  color: #707070; 
+}
+
+.has_mobile {
+  color: #333 !important; 
+}
+
+
+
+
+
+
+
+
+
+
+/*  wechat requirement */
+
+.agreement-container {
+  margin-bottom: 20rpx;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  font-size: 30rpx;
+}
+
+.link {
+  color: #007AFF;
+  display: inline;
+}
+
+.loginbtn {
+  /* your existing styles */
+  opacity: 1;
+}
+
+.loginbtn[disabled] {
+  opacity: 0.5;
+}
+

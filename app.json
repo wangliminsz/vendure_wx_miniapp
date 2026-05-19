@@ -4,13 +4,15 @@
     "pages/category/category",
     "pages/cart/cart",
     "pages/mine/mine",
+    "pages/mine/register",
     "pages/product/product",
     "pages/search/search",
     "pages/orders/orders",
     "pages/orderDetail/orderDetail",
     "pages/address/address",
     "pages/checkout/checkout",
-    "pages/login/login"
+    "pages/userAgreement/userAgreement",
+    "pages/privacyPolicy/privacyPolicy"
   ],
 
   "tabBar": { 
