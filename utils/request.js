@@ -9,10 +9,12 @@ class Request {
   getHeaders(token = '') {
     const headers = {
       'Content-Type': 'application/json',
+      'X-Request-Type': 'GraphQL',
     };
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    const storedToken = token || wx.getStorageSync('vendure-auth-token');
+    if (storedToken) {
+      headers['Authorization'] = `Bearer ${storedToken}`;
     }
 
     return headers;

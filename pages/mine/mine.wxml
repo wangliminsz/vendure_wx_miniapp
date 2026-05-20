@@ -1,65 +1,42 @@
-<view class='section'>
+<view class="page-container">
+  <!-- 顶部用户信息大卡片（全信息展示） -->
+  <view class="user-card">
+    <view class="user-info">
+      <!-- 头像 -->
+      <image class="avatar" src="{{userAvatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <!-- 信息区域：昵称 + 姓名 + 手机号 分层展示 -->
+      <!-- {{isLogin}} -->
+      <view class="user-text">
 
-  <!-- 头像和名称 -->
-  <view class='broker'>
-    <view class='bd'>
-      <image class="broker-head" src="{{userAvatarUrl}}"> </image>
-      <view class='name'>
-        <view wx:if="{{!userNickName}}" class='txt'>
-          <text>点击按钮填写信息 </text>
+        <view class="flex justify-between">
+
+          <view>
+            <view class="user-nickname" wx:if="{{userNickName}}">{{userNickName}}</view>
+            <view class="user-nickname placeholder" bindtap="updateUserInfo2" wx:else>点击注册</view>
+            <view class="user-name" wx:if="{{userName}}">姓名：{{userName}}</view>
+            <view class="user-phone" wx:if="{{userMobile}}">手机号：{{userMobile}}</view>
+          </view>
+
+          <!-- 登录状态显示：已登录 -->
+          <view wx:if="{{isLogin}}" style="color:#0e8146; font-size:14px; margin-bottom:5px;">✅ 已登录</view>
+        
         </view>
-        <view wx:else class='txt'>
-          <text>{{userNickName}} </text>
-        </view>
+
+
       </view>
     </view>
   </view>
 
-  <!-- button 按钮 -->
-  <view class='method'>
-    <view class='name'>
-      <view class='txt'><text class='ft24'></text></view>
-    </view>
-
-    <!--之前 新版登录-->
-    <!-- <view class="bd">
-      <button class="loginbtn" bindtap="updateUserInfo2"> 用户授权(新版)</button>
-    </view> -->
-    <!--之前 新版登录-->
-
-    <!--之前 新版登录-->
-    <view class="bd">
-      <!-- wx:if="{{canUserGetUserProfile}}" -->
-      <button class="loginbtn" bindtap="updateUserInfo2"> 用户授权(新版)</button>
-      <view style="margin-top: 20px;"></view>
-      <button class="returnbtn" bindtap="returnToHome">返回</button>
-    </view>
-
-
-
-    <view class="user_container">
-      <navigator url="/pages/userAgreement/userAgreement" class="link">用户服务协议</navigator>
-      <navigator url="/pages/privacyPolicy/privacyPolicy" class="link">隐私政策</navigator>
-      <view style="margin-top:10px;"></view>
-      
-    </view>
-
-
-
+  <!-- 操作按钮组（宽松大间距） -->
+  <view class="btn-group">
+    <button class="btn-primary" bindtap="updateUserInfo2">注册/更新</button>
+    <button class="btn-default" bindtap="returnToHome">返回首页</button>
   </view>
 
-
-
-
-
+  <!-- 底部协议 -->
+  <view class="agreement">
+    <navigator url="/pages/userAgreement/userAgreement" class="link">用户服务协议</navigator>
+    <view class="line"></view>
+    <navigator url="/pages/privacyPolicy/privacyPolicy" class="link">隐私政策</navigator>
+  </view>
 </view>
-
-
-
-<!-- <text>
-      {{userInfoExist}} \n
-      {{userOpenId}} \n
-      {{userAvatarUrl}} \n
-      {{userNickName}} \n
-      {{userMobile}}
-    </text> -->

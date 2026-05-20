@@ -1,6 +1,7 @@
 const config = {
 
   baseUrl: 'http://192.168.0.51:3000/shop-api',
+  CHANNEL_TOKEN: '3u7xpg60e4lc7stp7vac',
 
   development: {
     API_URL: 'http://192.168.0.51:3000/shop-api',
@@ -11,16 +12,11 @@ const config = {
     GRAPHQL_URL: 'https://shop.youcai-tool.com',
   },
 
-  CHANNEL_TOKEN: '3u7xpg60e4lc7stp7vac',
 
   PAGE_SIZE: 10,
-
   FILTER_MODE: 'server',
-
   PAGE_REC_NUMBER: 12,
-
   PRODUCT_COLUMNS: 2,
-
   BANNER_INTERVAL: 10000,
 
   IMAGE_SIZES: {
@@ -33,6 +29,13 @@ const config = {
 
   avatarImg: "/static/images/get_avatar.png",
   cloudEnvId: "bkkschool-1304214433-4bo349633e7",
+  cloudAppId: 'wx65ce07b8050f8ae4'
+
+   // 实例化共享环境
+  //  const mycloud = new wx.cloud.Cloud({
+  //   resourceAppid: 'wx65ce07b8050f8ae4', // 资源方AppID
+  //   resourceEnv: 'bkkschool-1304214433-4bo349633e7' // 共享给你的环境ID
+  // })
   
 };
 

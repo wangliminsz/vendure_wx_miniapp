@@ -50,7 +50,7 @@ Page({
     try {
       console.log('========== Loading categories from Vendure ==========');
       const collections = await getCollections();
-      console.log('Raw collections from Vendure:', JSON.stringify(collections, null, 2));
+      // console.log('Raw collections from Vendure:', JSON.stringify(collections, null, 2));
       
       if (collections.length === 0) {
         console.log('No collections returned from Vendure, using default categories');

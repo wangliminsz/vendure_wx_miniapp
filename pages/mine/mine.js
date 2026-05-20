@@ -1,202 +1,79 @@
 const app = getApp();
-// logs.js
-const util = require('../../utils/util.js')
+const util = require('../../utils/util.js');
 const config = require('../../config.js');
 
 Page({
   data: {
-
-    baseUrl: config.fastapiUrl,
-
+    fastapiUrl: config.fastapiUrl,
     userInfoExist: false,
     userOpenId: '',
     userAvatarUrl: config.avatarImg,
     userNickName: '',
+    userName: '',
     userMobile: '',
-    userMobileColor: '#707070', // 初始文本颜色
-
-    canIUseGetUserProfile: wx.canIUse('getUserProfile'),
-    canIUseNicknameComp: wx.canIUse('input.type.nickname'),
-    canUserGetUserProfile: false
-
+    userMobileColor: '#707070', 
+    isLogin: false // 标记电商登录状态
   },
 
   returnToHome: function () {
     wx.switchTab({
-      url: '/pages/home/home',
-      success: () => {
-        console.log('Switched to Homepage');
-      }
+      url: '/pages/home/home'
     });
   },
 
   async onLoad() {
-    console.log("config.fastapiUrl--->", `${config.fastapiUrl}`)
-    console.log("config.fastapiUrl--->", this.data.baseUrl)
+    wx.showLoading({ title: '加载中...', mask: true });
 
-    const openid = wx.getStorageSync('openid');
-    const avatarurl = wx.getStorageSync('avatarurl');
-    const nickname = wx.getStorageSync('nickname');
-    const mobile = wx.getStorageSync('mobile');
+    // ⏳ 核心安全机制：等待 app.js 鉴权控制流完全终结
+    await app.loginPromise;
 
-    //local Storage
-    try {
-      if (!openid) {
-        const res = await this.checkOpenId_Local()
-      } else {
-        this.setData({
-          userOpenId: openid,
-        }, () => {
-          console.log("login onLoad localStorage openid--->", this.data.userOpenId);
-        });
-      }
+    const openid = app.globalData.openid || wx.getStorageSync('openid');
+    
+    this.setData({
+      userOpenId: openid,
+      isLogin: app.globalData.isLogin
+    });
 
-    } catch (e) {
-      console.error('Error retrieving OpenID from local storage:', e);
-    };
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //cloud Database 
-    if (!avatarurl || avatarurl === `${config.avatarImg}` || !nickname) {
-      try {
-        if (!openid) {
-          const res = await this.checkOpenId()
-        } else {
-          const res = await this.cloudDbRead(openid)
-        }
-      } catch (e) {
-        console.error('Error get OpenID from Cloud Db:', e);
-      };
+    // 如果拿到有效的 openid，去同步拉取微信云开发中的个性化资料（如云存储头像）
+    if (openid) {
+      await this.cloudDbRead(openid);
     }
 
+    // 同步本地缓存兜底显示
+    this.readLocalStorageInfo();
+    
+    wx.hideLoading();
   },
 
   async onShow() {
+    // 每次页面切回时，确保最新的资料能及时刷新刷新
+    this.setData({
+      isLogin: app.globalData.isLogin
+    });
+    this.readLocalStorageInfo();
+  },
 
-    const openid = wx.getStorageSync('openid');
+  /**
+   * 提取本地缓存资料进行视图渲染
+   */
+  readLocalStorageInfo() {
     const avatarurl = wx.getStorageSync('avatarurl');
     const nickname = wx.getStorageSync('nickname');
     const mobile = wx.getStorageSync('mobile');
+    const userName = wx.getStorageSync('userName');
 
-    //local Storage
-    try {
-      if (!openid) {
-        const res = await this.checkOpenId_Local()
-      } else {
-        this.setData({
-          userOpenId: openid,
-        }, () => {
-          console.log("login onShow get openid--->", this.data.userOpenId);
-        });
-      }
-
-      if (!avatarurl || avatarurl === `${config.avatarImg}`) {} else {
-        this.setData({
-          userAvatarUrl: avatarurl
-        }, () => {
-          console.log("localStorage Read avatar nickname--->", this.data.userAvatarUrl,
-            this.data.userNickName);
-        });
-      }
-
-      if (!nickname) {} else {
-        this.setData({
-          userNickName: nickname
-        }, () => {
-          console.log("localStorage Read avatar nickname--->", this.data.userAvatarUrl,
-            this.data.userNickName);
-        });
-      }
-
-      if (!mobile) {} else {
-        this.setData({
-          userMobile: mobile,
-        }, () => {
-          console.log("localStorage Read mobile --->", this.data.userMobile);
-        });
-      }
-
-    } catch (e) {
-      console.error('Error retrieving OpenID from local storage:', e);
-    };
-  },
-
-  async checkOpenId_Local() {
-    try {
-      const openid = await this.retrieveOpenIdFromServer();
-      if (openid) {
-        wx.setStorageSync('openid', openid);
-        this.setData({
-          userOpenId: openid,
-        });
-
-        // Check if the user exists in the cloud database
-        console.log("openid, login onLoad, from cloud db--->")
-      } else {
-        console.error('Failed to retrieve OpenID from server');
-      }
-    } catch (e) {
-      console.error('Error retrieving OpenID from server:', e);
+    if (avatarurl && avatarurl !== `${config.avatarImg}`) {
+      this.setData({ userAvatarUrl: avatarurl });
     }
+    if (nickname) this.setData({ userNickName: nickname });
+    if (mobile) this.setData({ userMobile: mobile });
+    if (userName) this.setData({ userName: userName });
   },
 
-  async checkOpenId() {
-    try {
-      const openid = await this.retrieveOpenIdFromServer();
-      if (openid) {
-        wx.setStorageSync('openid', openid);
-        this.setData({
-          userOpenId: openid,
-        });
-
-        // Check if the user exists in the cloud database
-        const res = await this.cloudDbRead(openid);
-        console.log("onLoad from Cloud Db Read--->", res)
-      } else {
-        console.error('Failed to retrieve OpenID from server');
-      }
-    } catch (e) {
-      console.error('Error retrieving OpenID from server:', e);
-    }
-  },
-
-  async retrieveOpenIdFromServer() {
-    return new Promise((resolve, reject) => {
-      wx.login({
-        success: res => {
-          if (res.code) {
-            // Send the code to the backend server
-            wx.request({
-              url: `${config.fastapiUrl}/api/checkArkLoginStatus`, // Your server endpoint
-              method: 'POST',
-              data: {
-                code: res.code
-              },
-              success: res => {
-                // console.log('from Server --->>>', res);
-                if (res.data && res.data.openid) {
-                  resolve(res.data.openid);
-                } else {
-                  reject('No openid returned from server');
-                }
-              },
-              fail: err => {
-                console.error('Failed to check login status:', err);
-                reject(err);
-              }
-            });
-          } else {
-            console.error('Login failed:', res.errMsg);
-            reject(res.errMsg);
-          }
-        }
-      });
-    });
-  },
-
+  /**
+   * 读取微信云数据库
+   */
   async cloudDbRead(openid) {
-    const app = getApp();
     if (!app.cloud) {
       console.error('Cloud is not initialized');
       return null;
@@ -207,72 +84,50 @@ Page({
 
     try {
       const res = await userCollection.where({
-        _openid: openid
+        openid: openid // 统一查询字段
       }).get();
 
       if (res.data.length > 0) {
         const userInfo = res.data[0];
-        console.log('User info from cloud:', userInfo);
+        console.log('【云数据库】成功读取到个性化资料:', userInfo);
 
         this.setData({
-          userOpenId: openid,
-          userAvatarUrl: res.data[0].avatarurl,
-          userNickName: res.data[0].nickname,
-          userMobile: res.data[0].mobile
-        }, () => {
-          wx.setStorageSync('avatarurl', res.data[0].avatarurl);
-          wx.setStorageSync('nickname', res.data[0].nickname);
-          wx.setStorageSync('mobile', res.data[0].mobile);
-          console.log("onDB Read setData ASYNC--->", this.data.userOpenId, this.data.userAvatarUrl,
-            this.data.userNickName, this.data.userMobile);
+          userAvatarUrl: userInfo.avatarurl || this.data.userAvatarUrl,
+          userNickName: userInfo.nickname || this.data.userNickName,
+          userMobile: userInfo.mobile || this.data.userMobile,
+          userName: userInfo.userName || this.data.userName,
+          userInfoExist: true
         });
+
+        // 同步写回本地缓存，防止时差闪烁
+        if (userInfo.avatarurl) wx.setStorageSync('avatarurl', userInfo.avatarurl);
+        if (userInfo.nickname) wx.setStorageSync('nickname', userInfo.nickname);
+        if (userInfo.mobile) wx.setStorageSync('mobile', userInfo.mobile);
+        if (userInfo.userName) wx.setStorageSync('userName', userInfo.userName);
+
         return userInfo;
       } else {
-        console.log('No user info in cloud for openid');
+        console.log('【云数据库】该 OpenID 暂未创建云端个性化记录');
+        this.setData({ userInfoExist: false });
         return null;
       }
     } catch (err) {
-      console.error('Error from cloud database:', err);
+      console.error('读取微信云数据库故障:', err);
       return null;
     }
   },
 
   updateUserInfo2: function () {
     wx.navigateTo({
-      url: '/pages/mine/register',
-      success: function (res) {
-        console.log('Navigation to /mine/register successful');
-      },
-      fail: function (err) {
-        console.error('Navigation to /mine/register failed', err);
-      }
+      url: '/pages/mine/register'
     });
   },
 
-  // ~~~~~~~~~~~~~~~~~~~~~~~
-  // 分享给朋友，分享到朋友圈
-
   onShareAppMessage: function () {
-    // const thisUrl = this.data.theUrl;
-    console.log('from login Page, Share Msg Action--->')
-    return {
-      title: '优材工品',
-      path: '/pages/mine/mine',
-    };
+    return { title: '优材工品', path: '/pages/mine/mine' };
   },
-
-  // onShareTimeline
 
   onShareTimeline: function () {
-    // const thisUrl = this.data.theUrl;
-    console.log('from login Page, Share TL Action--->')
-    return {
-      title: '优材工品',
-      path: '/pages/mine/mine',
-    };
-  },
-
-
-  //  ~~~~~~~~~~~~~~~~~~~~~~
-
-})
+    return { title: '优材工品', path: '/pages/mine/mine' };
+  }
+});

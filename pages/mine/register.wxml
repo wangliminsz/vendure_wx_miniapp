@@ -1,41 +1,70 @@
-<!--index.wxml-->
-<view class="section">
-  <!-- <view class="page-title">我的信息</view> -->
+<view class="page-container">
+  <!-- 页面标题 -->
+  <view class="page-title">注册/更新信息</view>
 
-  <!-- 头像行 -->
-  <view class="myavatar-wrapper">
-    <text class="nickname-label">您的头像</text>
-    <button class="avatar_button" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-      <image class="avatar" src="{{userAvatarUrl}}"></image>
-    </button>
-  </view>
+  <!-- 信息填写卡片 -->
+  <view class="form-card">
+    <!-- 头像行 -->
+    <view class="form-item avatar-item">
+      <text class="form-label">您的头像</text>
+      <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="avatar" src="{{userAvatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      </button>
+    </view>
 
-  <!-- 昵称行（红框重点对齐） -->
-  <view class="nickname-wrapper">
-    <text class="nickname-label">您的昵称</text>
-    <input value="{{userNickName}}" type="nickname" class="nickname-input" placeholder="请输入昵称" placeholder-class="nickname-placeholder" bind:change="onInputChange" />
+    <!-- 昵称行 -->
+    <view class="form-item">
+      <text class="form-label">您的昵称</text>
+      <input 
+        value="{{userNickName}}" 
+        type="nickname" 
+        class="form-input" 
+        placeholder="请输入昵称" 
+        placeholder-class="input-placeholder" 
+        bind:change="onNickNameInputChange" 
+      />
+    </view>
+
+    <!-- 姓名行 -->
+    <view class="form-item">
+      <text class="form-label">您的姓名</text>
+      <input 
+        value="{{userName}}" 
+        class="form-input" 
+        placeholder="请输入姓名" 
+        placeholder-class="input-placeholder" 
+        bind:change="onUserNameInputChange" 
+      />
+    </view>
+
+    <!-- 手机号码行 -->
+    <view class="form-item">
+      <text class="form-label">手机号码</text>
+      <input 
+        value="{{userMobile}}" 
+        type="number" 
+        class="form-input" 
+        placeholder="请输入手机号码" 
+        placeholder-class="input-placeholder" 
+        bind:change="onUserMobileInputChange" 
+        maxlength="11"
+      />
+    </view>
   </view>
 
   <!-- 协议勾选 -->
-  <view class="agreement-container">
+  <view class="agreement-box">
     <checkbox-group bindchange="checkboxChange">
-      <label class="checkbox">
-        <checkbox value="agreed" checked="{{false}}" style="margin-right: 5px;" />同意
-        <navigator url="/pages/userAgreement/userAgreement" class="link">用户服务协议</navigator>
-        和
-        <navigator url="/pages/privacyPolicy/privacyPolicy" class="link">隐私政策</navigator>
+      <label class="agreement-label">
+        <checkbox value="agreed" checked="{{isAgreed}}" color="#165DFF" />
+        <text class="agreement-text">我已阅读并同意</text>
+        <navigator url="/pages/userAgreement/userAgreement" class="agreement-link">《用户服务协议》</navigator>
+        <text>和</text>
+        <navigator url="/pages/privacyPolicy/privacyPolicy" class="agreement-link">《隐私政策》</navigator>
       </label>
     </checkbox-group>
   </view>
 
   <!-- 提交按钮 -->
-  <button class="loginbtn" bindtap="bindSubmit" disabled="{{!isAgreed}}">提交信息</button>
-
-  <!-- 底部协议链接 -->
-  <!-- <view class="user_container">
-    <navigator url="/pages/userAgreement/userAgreement" class="link">用户服务协议</navigator>
-    <navigator url="/pages/privacyPolicy/privacyPolicy" class="link">隐私政策</navigator>
-    <view style="margin-top:10px;"></view>
-  </view> -->
-
+  <button class="submit-btn" bindtap="bindSubmit" disabled="{{!isAgreed}}">提交信息</button>
 </view>

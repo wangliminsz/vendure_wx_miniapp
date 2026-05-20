@@ -1,124 +1,133 @@
-
-.user_container {
-  height: 100%;
+/* 全局容器：宽松背景 + 安全边距 */
+.page-container {
+  min-height: calc(100vh - 120rpx); /* 完美避开底部Tab栏 */
+  background: #F5F7FA;
+  padding: 40rpx 16rpx 80rpx; /* 顶部大间距，底部防遮挡 */
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 200rpx 0;
-  box-sizing: border-box;
-  color: #000 !important
-} 
+}
 
-.wdxieyi{
+/* 用户信息卡片：更大圆角 + 更强阴影 + 超宽松内边距 */
+.user-card {
+  width: 86%;
+  max-width: 680rpx;
+  background: #fff;
+  border-radius: 24rpx; /* 强化工业风圆角 */
+  padding: 48rpx 40rpx; /* 超大内边距，内部更舒适 */
+  /* margin-left: 50px; 
+  margin-right: 50px;  */
+  margin-bottom: 100rpx; /* 卡片和按钮的超大间距 */
+  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06); /* 柔和高级阴影 */
+  border: 1rpx solid #E5E6EB;
+}
+
+.user-info {
   display: flex;
-  flex-direction: row;
-  justify-content: start;
-  font-size: 24rpx;
-  padding-left: 100rpx;
+  align-items: center;
 }
-.avatar-wrapper{
-  padding: 20rpx;
+
+/* 头像：更大尺寸 + 更强存在感 */
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  margin-right: 32rpx; /* 头像和文字的舒适间距 */
+  background: #E5E6EB;
+  border: 2rpx solid #F2F3F5;
 }
-.avatar-wrapper::after{
+
+/* 用户文字区域：分层展示，行高宽松 */
+.user-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx; /* 昵称/姓名/手机号 之间的舒适间距 */
+}
+
+/* 昵称：主标题层级 */
+.user-nickname {
+  font-size: 36rpx; /* 主标题字号 */
+  font-weight: 700;
+  color: #1D2129;
+  line-height: 1.4;
+}
+.user-nickname.placeholder {
+  color: #86909C;
+  font-weight: 500;
+}
+
+/* 姓名：次级信息层级 */
+.user-name {
+  font-size: 28rpx;
+  color: #4E5969;
+  line-height: 1.4;
+}
+
+/* 手机号：辅助信息层级 */
+.user-phone {
+  font-size: 26rpx;
+  color: #86909C;
+  line-height: 1.4;
+}
+
+/* 按钮组：居中布局 + 超宽按钮 + 大间距 */
+.btn-group {
+  width: 100%;
+  max-width: 520rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx; /* 两个按钮之间的舒适间距 */
+  margin-bottom: 80rpx; /* 按钮和协议的超大间距 */
+}
+
+/* 主按钮：更大尺寸 + 更稳视觉 */
+.btn-primary {
+  height: 96rpx; /* 远超规范的高度，点击更友好 */
+  background: #165DFF;
+  color: #fff;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 4rpx 12rpx rgba(22, 93, 255, 0.2);
+}
+
+/* 次要按钮：统一规范 */
+.btn-default {
+  height: 96rpx;
+  background: #fff;
+  color: #4E5969;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+  border: 1rpx solid #E5E6EB;
+}
+
+/* 去除按钮默认样式 */
+.btn-primary::after,
+.btn-default::after {
   border: none;
 }
-.section{
-  height: 100vh;
-  background: #fff;
-  padding-bottom: 30rpx;
-}
-/*broker 经纪人*/
-.broker{
-  padding-left: 30rpx;
-  margin-top: 0rpx;
-}
-.broker .bd{
-   padding: 30rpx;
-}
- .broker-head{
-    width:90rpx; height: 90rpx;
-    border-radius: 50%;
-    float: left;   
-    margin-top: 0rpx;
-}
-.broker .name{   
-  margin-left: 150rpx;
-  text-align: left;
-  vertical-align: center;
-}
- 
-.broker .txt{
-  font-size: 18px;
-  display: inline-block;
-  width: 75%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;  
-  text-align: left;
-  margin-top: 15rpx;
-}
-/*登录方式*/
-.method{
-  padding: 60rpx;
-}
-.method .name{
-  border-bottom: 1rpx solid #dadada;
-  position: relative;
-  height: 30rpx;
-  }
-.method .txt{
-  position: absolute;
-  width: 200rpx;
-  left: 50%;
-  margin-left: -100rpx;
-  background: #fff;
-  bottom:-25rpx;
-  text-align: center;
-  color: #999;
-}
-.method .bd{
-   text-align: center;
-   padding-top: 60rpx;
-   width: 100%;
-}
-/**/
-.cp{
-  margin-top: 15rpx;
-  padding: 10rpx 30rpx 10rpx 60rpx;
-}
-.cp .bd{
-  border-bottom: #dadada 1px solid;
-}
-.line{
-   height: 90rpx;
-   line-height: 90rpx;
-}
-.line .more{
-  float: right;
-  text-align: right;
-  color: #999;
+
+/* 底部协议：居中 + 舒适排版 */
+.agreement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #86909C;
+  margin-top: auto; /* 自动顶到页面底部，留白更自然 */
 }
 
-button[size=mini] {
-display:inline-block;
-line-height:2.3;
-font-size:13px;
-padding:0 0.75em;
-
-}
-.loginbtn{
-  background-color: #165DFF;
-  color: #fff;
-}
-
-.returnbtn{
-  background-color: #999999;
-  color: #fff;
-  
+.line {
+  width: 1rpx;
+  height: 24rpx;
+  background: #C9CDD4;
+  margin: 0 20rpx;
 }
 
 .link {
-  color: #007AFF;
-  display: inline;
+  color: #165DFF;
 }

@@ -1,0 +1,29 @@
+页面（例如首页、个人中心）如何调用全局登录状态？
+为了配合重构后的 app.js，你的具体页面只需要在 onLoad 里通过一句 await app.loginPromise 即可优雅同步状态。
+
+示例代码：
+
+JavaScript
+// pages/index/index.js
+const app = getApp();
+
+Page({
+  data: {
+    isLogin: false
+  },
+  async onLoad() {
+    // ⏳ 哪怕此页面比 app.js 更快加载完，它也会静静等待后端验证结束
+    const authResult = await app.loginPromise; 
+    
+    this.setData({
+      isLogin: app.globalData.isLogin
+    });
+
+    if (app.globalData.isLogin) {
+      console.log('首页确认：老用户已就绪，开始发送带 Token 的请求拉取购物车与产品');
+      this.loadUserShopData();
+    } else {
+      console.log('首页确认：未登录状态，页面渲染“请先授权登录”引导按钮');
+    }
+  }
+});

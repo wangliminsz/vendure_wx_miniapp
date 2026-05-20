@@ -1,20 +1,17 @@
+const app = getApp();
 const config = require('../../config.js');
 
 Page({
   data: {
-    isAgreed: false, //微信审核要求
-
-    baseUrl: config.fastapiUrl,
-
+    isAgreed: false, // 微信审核要求
+    fastapiUrl: config.fastapiUrl,
     userOpenId: '',
     userAvatarUrl: config.avatarImg,
     userNickName: '',
+    userName: '',
     userMobile: '',
-    userMobileColor: '#707070', // 初始文本颜色
-
-    hasUserInfo: false,
-    canIUseGetUserProfile: wx.canIUse('getUserProfile'),
-    canIUseNicknameComp: wx.canIUse('input.type.nickname'),
+    userMobileColor: '#707070', 
+    hasUserInfo: false
   },
 
   checkboxChange(e) {
@@ -24,358 +21,277 @@ Page({
   },
 
   async onLoad() {
+    const openid = app.globalData.openid || wx.getStorageSync('openid');
+    this.setData({ userOpenId: openid });
 
-    console.log("config.fastapiUrl--->", `${config.fastapiUrl}`)
-    console.log("config.fastapiUrl--->", this.data.baseUrl)
-
-    const openid = wx.getStorageSync('openid');
+    // 初始化载入已有缓存
     const avatarurl = wx.getStorageSync('avatarurl');
     const nickname = wx.getStorageSync('nickname');
     const mobile = wx.getStorageSync('mobile');
+    const userName = wx.getStorageSync('userName');
 
-    //local Storage
+    if (openid) this.setData({ userOpenId: openid });
+    if (avatarurl && avatarurl !== `${config.avatarImg}`) this.setData({ userAvatarUrl: avatarurl });
+    if (nickname) this.setData({ userNickName: nickname });
+    if (mobile) this.setData({ userMobile: mobile });
+    if (userName) this.setData({ userName: userName });
+  },
+
+  /**
+   * 提交表单主控制流
+   */
+  async bindSubmit() {
+    const { userOpenId, userAvatarUrl, userNickName, userMobile, userName, isAgreed } = this.data;
+
+    if (!isAgreed) {
+      return wx.showToast({ title: '请先同意用户协议和隐私政策', icon: 'none' });
+    }
+
+    if (userAvatarUrl === `${config.avatarImg}` || !userNickName || !userMobile || !userName) {
+      return wx.showToast({ title: '请填写必要信息', icon: 'none', duration: 2500 });
+    }
+
+    // ⏳ 开启全局统一的 Loading
+    wx.showLoading({ title: '正在提交中...', mask: true });
+
     try {
-      if (openid) {
-        this.setData({
-          userOpenId: openid,
-        }, () => {
-          console.log("register onload get openid--->", this.data.userOpenId);
-        });
-      }
-
-      if (!avatarurl || avatarurl === `${config.avatarImg}`) {} else {
-        this.setData({
-          userAvatarUrl: avatarurl
-        }, () => {
-          console.log("localStorage Read avatar nickname--->", this.data.userAvatarUrl,
-            this.data.userNickName);
-        });
-      }
-
-      if (!nickname) {} else {
-        this.setData({
-          userNickName: nickname
-        }, () => {
-          console.log("localStorage Read avatar nickname--->", this.data.userAvatarUrl,
-            this.data.userNickName);
-        });
-      }
-
-      if (!mobile) {} else {
-        this.setData({
-          userMobile: mobile,
-        }, () => {
-          console.log("localStorage Read mobile --->", this.data.userMobile);
-        });
-      }
-    } catch (e) {
-      console.error('Error onLoad:', e);
-    };
-  },
-
-  bindSubmit() {
-    const openid = this.data.userOpenid;
-    const avatarurl = this.data.userAvatarUrl;
-    const nickname = this.data.userNickName;
-    const mobile = this.data.userMobile;
-
-    if (this.data.isAgreed) {
-      // Proceed with submission
-      console.log('Submitting information...');
-
-      // 2024-11-29 Add your submission logic here
-
-
-      // || !mobile
-      if (avatarurl === `${config.avatarImg}` || !nickname) {
-        wx.showToast({
-          title: '请授权微信头像及昵称',
-          icon: 'none',
-          duration: 2500
-        });
-        // return;
+      if (!app.globalData.isLogin) {
+        // 🔥 情况 A：新用户注册 ➡️ 发起开户
+        console.log('【开户】检测到电商未注册状态，发起 Vendure 注册流程...');
+        const result = await this.registerToVendure(userOpenId, userNickName, userName, userMobile);
+        
+        if (!result.success) {
+          wx.hideLoading(); // 👈 必须在 showToast 之前关闭 Loading
+          wx.showToast({ title: result.message || '开户失败', icon: 'none' });
+          return;
+        }
       } else {
-        // console.log('this.userOpenId--->', this.data.userOpenId)
-        // console.log('this.userAvatarUrl--->', this.data.userAvatarUrl)
-        // console.log('this.userNickName--->', this.data.userNickName)
-        // console.log('this.userMobile--->', this.data.userMobile)
-
-        // wx.setStorageSync('avatarurl', this.data.userAvatarUrl)
-        // wx.setStorageSync('nickname', this.data.userNickName)
-        // wx.setStorageSync('mobile', this.data.userMobile)
-
-        this.cloudDbWrite(this.data.userOpenId, this.data.userAvatarUrl, this.data.userNickName, this.data.userMobile).then(() => {
-            wx.showToast({
-              title: '提交成功',
-              icon: 'success',
-              duration: 2000,
-              complete: () => {
-                setTimeout(() => {
-                  // wx.navigateBack();
-                  wx.switchTab({
-                    url: '/pages/login/login',
-                    success: () => {
-                      console.log('User info updated and switched to TabBar page');
-                    }
-                  });
-                }, 2000); // Navigate back after 2 seconds
-              }
-            });
-
-            wx.setStorageSync('avatarurl', this.data.userAvatarUrl)
-            wx.setStorageSync('nickname', this.data.userNickName)
-            wx.setStorageSync('mobile', this.data.userMobile)
-
-          })
-          .catch(err => {
-            console.error('Failed to submit user info:', err);
-            wx.showToast({
-              title: '提交失败，请重试',
-              icon: 'none',
-              duration: 2500
-            });
-          });
-
+        // 🔥 情况 B：老用户更新 ➡️ 修复 400 错误后的标准更新接口
+        console.log('【更新】检测到老用户状态，正在同步修改至 Vendure 系统...');
+        const result = await this.updateToVendure(userNickName, userName, userMobile);
+        
+        if (!result.success) {
+          wx.hideLoading(); // 👈 必须在 showToast 之前关闭 Loading
+          wx.showToast({ title: result.message || '更新资料失败', icon: 'none' });
+          return;
+        }
       }
 
+      // 💾 两端下沉同步：核心电商系统成功后，同步写入微信云数据库
+      await this.cloudDbWrite(userOpenId, userAvatarUrl, userNickName, userMobile, userName);
 
-      // 2024-11-29 Add your submission logic here
+      // 固化本地缓存
+      wx.setStorageSync('avatarurl', userAvatarUrl);
+      wx.setStorageSync('nickname', userNickName);
+      wx.setStorageSync('mobile', userMobile);
+      wx.setStorageSync('userName', userName);
 
-
-    } else {
+      // ✔ 流程完美结束，关闭 Loading 并提示成功
+      wx.hideLoading();
       wx.showToast({
-        title: '请先同意用户协议和隐私政策',
-        icon: 'none'
+        title: '保存成功',
+        icon: 'success',
+        duration: 2000,
+        complete: () => {
+          setTimeout(() => {
+            wx.switchTab({ url: '/pages/mine/mine' });
+          }, 2000);
+        }
       });
+
+    } catch (error) {
+      console.error('表单提交综合控制流异常:', error);
+      wx.hideLoading();
+      wx.showToast({ title: '服务暂不可用，请重试', icon: 'none' });
     }
-
-
   },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // Function to write to the cloud database
-  cloudDbWrite(userOpenId, userAvatarUrl, userNickName, userMobile) {
-
-    const app = getApp();
-    if (!app.cloud) {
-      console.error('Cloud is not initialized');
-      return null;
-    }
-
-
-    const db = app.cloud.database();
-    const userCollection = db.collection('user');
-    // Check if the openid already exists
-    return userCollection.where({
-      openid: userOpenId
-    }).get().then(res => {
-      if (res.data.length > 0) {
-        // If openid exists, update the record
-        const docId = res.data[0]._id;
-        return userCollection.doc(docId).update({
-          data: {
-            avatarurl: userAvatarUrl,
-            nickname: userNickName,
-            mobile: userMobile
+  /**
+   * 纯净逻辑 A：向 Vendure 发起全新微信开户注册
+   */
+  registerToVendure(openId, nickname, lastName, phone) {
+    return new Promise((resolve) => {
+      wx.request({
+        url: app.globalData.baseUrl,
+        method: 'POST',
+        data: {
+          query: `
+            mutation DoRegister($openId: String!, $nickname: String, $lastName: String, $phone: String) {
+              authenticate(input: {
+                wechat: {
+                  openId: $openId,
+                  nickname: $nickname,
+                  lastName: $lastName,
+                  phoneNumber: $phone,
+                  signUp: true
+                }
+              }) {
+                __typename
+                ... on CurrentUser {
+                  id
+                }
+                ... on InvalidCredentialsError {
+                  errorCode
+                  message
+                }
+              }
+            }
+          `,
+          variables: { openId, nickname, lastName, phone }
+        },
+        success: (res) => {
+          if (res.data?.errors && res.data.errors.length > 0) {
+            resolve({ success: false, message: res.data.errors[0].message });
+            return;
           }
-        }).then(() => {
-          console.log('User info updated successfully');
-        }).catch(err => {
-          console.error('Failed to update user info:', err);
-        });
-      } else {
-        // If openid does not exist, add a new record
-        return userCollection.add({
-          data: {
-            openid: userOpenId,
-            avatarurl: userAvatarUrl,
-            nickname: userNickName,
-            mobile: userMobile
+          const authData = res.data?.data?.authenticate;
+          if (authData?.__typename === 'CurrentUser') {
+            const token = res.header['vendure-auth-token'] || res.header['Vendure-Auth-Token'];
+            if (token) {
+              wx.setStorageSync('vendure-auth-token', token);
+              app.globalData.isLogin = true; 
+              resolve({ success: true });
+            } else {
+              resolve({ success: false, message: '未获取到系统安全令牌' });
+            }
+          } else {
+            resolve({ success: false, message: authData?.message || '注册认证失败' });
           }
-        }).then(() => {
-          console.log('User info added successfully');
-        }).catch(err => {
-          console.error('Failed to add user info:', err);
-        });
-      }
-    }).catch(err => {
-      console.error('Failed to query user info:', err);
+        },
+        fail: () => resolve({ success: false, message: '无法连接核心电商服务器' })
+      });
     });
   },
 
+  /**
+   * 纯净逻辑 B：老用户修改核心资料（🔥 已修复 400 Bad Request 语法）
+   */
+  updateToVendure(nickname, lastName, phone) {
+    const token = wx.getStorageSync('vendure-auth-token');
+    return new Promise((resolve) => {
+      wx.request({
+        url: app.globalData.baseUrl,
+        method: 'POST',
+        header: {
+          'Authorization': `Bearer ${token}` 
+        },
+        data: {
+          query: `
+            mutation UpdateCustomerInfo($firstName: String, $lastName: String, $phone: String) {
+              updateCustomer(input: {
+                firstName: $firstName,
+                lastName: $lastName,
+                phoneNumber: $phone
+              }) {
+                id # 👈 🔥 关键：直接请求底层对象的属性，剔除不合法的 ... on ErrorResult
+              }
+            }
+          `,
+          variables: {
+            firstName: nickname, 
+            lastName: lastName,   
+            phone: phone         
+          }
+        },
+        success: (res) => {
+          // 捕获 GraphQL 内部业务错误 (例如手机号格式不正确等)
+          if (res.data?.errors && res.data.errors.length > 0) {
+            console.error('【Vendure 内部拦截】:', res.data.errors);
+            resolve({ success: false, message: res.data.errors[0].message });
+            return;
+          }
 
+          const customer = res.data?.data?.updateCustomer;
+          if (customer && customer.id) {
+            console.log('【Vendure】客户电商数据同步成功 ✔');
+            resolve({ success: true });
+          } else {
+            resolve({ success: false, message: '核心系统拒绝了本次修改' });
+          }
+        },
+        fail: () => resolve({ success: false, message: '核心网络连接失败，未同步' })
+      });
+    });
+  },
 
-
-
-
-
-
-
-  onChooseAvatar(e) {
-
-    const app = getApp();
+  /**
+   * 微信云开发数据库同步下沉
+   */
+  cloudDbWrite(userOpenId, userAvatarUrl, userNickName, userMobile, userName) {
     if (!app.cloud) {
       console.error('Cloud is not initialized');
-      return null;
+      return Promise.resolve(null);
     }
 
+    const db = app.cloud.database();
+    const userCollection = db.collection('user');
+
+    return userCollection.where({
+      openid: userOpenId
+    }).get().then(res => {
+      const dataPayload = {
+        avatarurl: userAvatarUrl,
+        nickname: userNickName,
+        mobile: userMobile,
+        userName: userName,
+        openid: userOpenId 
+      };
+
+      if (res.data.length > 0) {
+        const docId = res.data[0]._id;
+        return userCollection.doc(docId).update({ data: dataPayload });
+      } else {
+        return userCollection.add({ data: dataPayload });
+      }
+    });
+  },
+
+  // ~~~~~~~~~~~~~~~~~~~~ 头像及输入框组件双向驱动 ~~~~~~~~~~~~~~~~~~~~
+
+  onChooseAvatar(e) {
+    if (!app.cloud) return;
     const avatarurl = e.detail.avatarUrl;
-    const nickname = this.data.userNickName;
-    const mobile = this.data.userMobile;
-    // 调用上传函数
-    this.uploadAvatarToCloud(avatarurl)
+    this.uploadAvatarToCloud(avatarurl);
   },
 
   uploadAvatarToCloud(avatarUrl) {
-
-    const app = getApp();
-    if (!app.cloud) {
-      console.error('Cloud is not initialized');
-      return null;
-    }
-
-    console.log("my filePath--->", avatarUrl)
+    if (!app.cloud) return;
+    wx.showLoading({ title: '头像上传中...' });
 
     app.cloud.uploadFile({
-      cloudPath: `avatars/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`, // 生成唯一的文件名
+      cloudPath: `avatars/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`,
       filePath: avatarUrl,
       success: res => {
-        // console.log('Upload success:', res)
-        // const fileUrl = res.fileID // 获取文件ID
-        // console.log('File URL:', fileUrl)
-
-        // this.setData({
-        //   "userAvatarUrl": fileUrl,
-        // });
-
-        console.log('Upload success:', res)
-        const fileID = res.fileID
-
-        // Get a temporary HTTP URL
+        const fileID = res.fileID;
         app.cloud.getTempFileURL({
           fileList: [fileID],
           success: res => {
-            const tempFileURL = res.fileList[0].tempFileURL
-            console.log('Temp File URL:', tempFileURL)
-
-            // Update the userAvatarUrl with the HTTP URL
-            this.setData({
-              userAvatarUrl: tempFileURL,
-            }, ()=>{
-              console.log('the userAvatarUrl---->>>> 2025-08-24--->', this.data.userAvatarUrl)
-            })
+            const tempFileURL = res.fileList[0].tempFileURL;
+            this.setData({ userAvatarUrl: tempFileURL });
+            wx.hideLoading();
           },
           fail: err => {
-            console.error('Failed to get temp URL:', err)
+            console.error(err);
+            wx.hideLoading();
           }
-        })
-
-
-
-
-
+        });
       },
-
       fail: err => {
-        console.error('Upload failed:', err)
-      },
-    })
-
-
-
+        console.error(err);
+        wx.hideLoading();
+      }
+    });
   },
 
-  onInputChange(e) {
-    const nickname = e.detail.value
-    const avatarurl = this.data.userAvatarUrl;
-    const mobile = this.data.userMobile;
-
-    this.setData({
-      "userNickName": nickname,
-    })
+  onNickNameInputChange(e) {
+    this.setData({ "userNickName": e.detail.value });
   },
 
-  // Handle phone number authorization
-  getPhoneNumber: function (e) {
-    if (e.detail.errMsg === "getPhoneNumber:ok") {
-      wx.login({
-        success: res => {
-          if (res.code) {
-            // Send the encrypted data and code to your backend
-            wx.request({
-              url: `${config.fastapiUrl}/get_ark_phone_number`,
-              method: 'POST',
-              data: {
-                code: res.code,
-                encryptedData: e.detail.encryptedData,
-                iv: e.detail.iv
-              },
-              success: response => {
-                if (response.statusCode === 200) {
-                  wx.showToast({
-                    title: '手机号获取成功',
-                    icon: 'success',
-                    duration: 2000
-                  });
-                  this.setData({
-                    "userMobile": response.data.phone_number,
-                    "userMobileColor": '#333',
-                  });
-                  console.log('my MobileColor 2--->>', this.data.userMobileColor)
+  onUserNameInputChange(e) {
+    this.setData({ "userName": e.detail.value });
+  },
 
-                } else {
-                  wx.showToast({
-                    title: '手机号获取失败',
-                    icon: 'none',
-                    duration: 2000
-                  });
-                }
-              },
-              fail: err => {
-                wx.showToast({
-                  title: '请求失败',
-                  icon: 'none',
-                  duration: 2000
-                });
-              }
-            });
-          } else {
-            wx.showToast({
-              title: '登录失败',
-              icon: 'none',
-              duration: 2000
-            });
-          }
-        }
-      });
-    } else {
-      wx.showToast({
-        title: '用户拒绝授权',
-        icon: 'none',
-        duration: 2000
-      });
-    }
+  onUserMobileInputChange(e) {
+    this.setData({ "userMobile": e.detail.value });
   }
-
-})
+});

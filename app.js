@@ -7,130 +7,85 @@ App({
     token: '',
     cartItems: [],
     customerInfo: null,
-    // 2025-05-19 
-    baseUrl: config.baseUrl, // 直接用！
-    isLogin: false
-    // 2025-05-19 
+    baseUrl: config.baseUrl, 
+    isLogin: false,
+    windowHeight: 0,
+    windowWidth: 0
   },
+
+  // 暴露给所有 Page 的全局登录凭证 Promise
+  loginPromise: null,
 
   async onLaunch() {
-
-    // this.checkLoginStatus();
+    // 1. 初始化渠道基础配置
     this.initChannel();
 
-    // 2026-05-19 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    this.checkAndLogin();
+    // 2. 获取屏幕尺寸
+    this.getSystemInfo();
 
-    // 2026-05-19 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // 3. 异步初始化云开发环境（不阻塞主登录流程）
+    this.initCloud();
 
-
-    //云开发
-
-    // 实例化共享环境
-    const mycloud = new wx.cloud.Cloud({
-      resourceAppid: 'wx65ce07b8050f8ae4', // 资源方AppID
-      resourceEnv: 'bkkschool-1304214433-4bo349633e7' // 共享给你的环境ID
-    })
-    mycloud.init().then(() => {
-      console.log('2026-05-共享云环境初始化成功------------->')
-      // 之后所有 wx.cloud 调用，都要用这个 cloud 实例
-      // 比如：cloud.uploadFile、cloud.database()
-    }).catch(err => {
-      console.error('2026-05-初始化失败-------------->', err)
-    })
-
-    this.cloud = mycloud; // 把全局的共享云实例赋值给 this.cloud
-    console.log('Cloud 已准备好:', this.cloud)
-
-    //云开发
-
-    // 登录 openid
-
-    let myOpenId = wx.getStorageSync("openid")
-
-    if (myOpenId) {
-      console.log("2026-05-18-openid exist---------------->>>>")
-    }else{
-      wx.login({
-        success: res => {
-          if (res.code) {
-            // Send the code to the backend server
-            console.log(res.code, "  <<-----app.js code Launch by WX")
-            wx.request({
-              url: `${config.fastapiUrl}/api/checkYcgpLoginStatus`, // Your server endpoint
-              method: 'POST',
-              data: {
-                code: res.code
-              },
-              success: res => {
-                wx.setStorageSync('openid', res.data.openid)
-  
-                // 检查用户是否已经授权
-                wx.getSetting({
-                  success: res => {
-                    this.globalData.userInfo = res.authSetting
-                    // console.log("wx.getSetting???", res)
-                  },
-                  fail: err => {
-                    console.error('app.js User---> Failed fetch Openid', err)
-                  }
-                })
-  
-                // 检查用户是否已经授权
-  
-              },
-              fail: err => {
-                console.error('app.js ---> Failed fetch Openid', err)
-              }
-            })
-          } else {
-            console.error('app.js ---> failed:', res.errMsg)
-          }
-        }
-      })
-    }
-
-    // 登录 openid
-
-    // 获取屏幕尺寸
-
-    try {
-      const windowInfo = wx.getWindowInfo()
-      this.globalData.windowHeight = windowInfo.windowHeight;
-      this.globalData.windowWidth = windowInfo.windowWidth;
-      console.log('this.globalData--->>>', this.globalData)
-    } catch (e) {
-      //error
-    }
-
-    // 获取屏幕尺寸
-
-
+    // 4. 🔥 启动核心身份鉴权控制流，并挂载到全局 Promise
+    this.loginPromise = this.initAuthFlow();
   },
 
-  // 2026-05-19 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  /**
+   * 核心身份鉴权控制流
+   */
+  async initAuthFlow() {
+    const token = wx.getStorageSync('vendure-auth-token');
 
-    // 核心控制流：检查并登录
-    checkAndLogin: function () {
-      const token = wx.getStorageSync('vendure-auth-token');
-  
-      if (!token) {
-        console.log('【Case 3】本地无 Token，正在执行静默注册/登录...');
-        this.doWechatLogin();
-      } else {
-        console.log('本地发现 Token，正在验证其有效性...');
-        this.verifyToken(token);
+    // ---- 步骤 1：本地有 Token，优先验证有效性 ----
+    if (token) {
+      console.log('【步骤 1】本地发现旧 Token，正在向后端验证有效性...');
+      const isValid = await this.verifyToken(token);
+      
+      if (isValid) {
+        console.log('【步骤 1-成功】Token 依然有效，老用户免密进入首页');
+        this.globalData.isLogin = true;
+        return { isLogin: true, openid: wx.getStorageSync('openid') };
       }
-    },
-  
-    // 1. 验证本地 Token 是否有效 (Case 1 & 2)
-    verifyToken: function (token) {
+      
+      console.log('【步骤 1-失效】Token 已失效或过期，清理旧缓存，准备走 OpenID 检查机制');
+      wx.removeStorageSync('vendure-auth-token');
+    }
+
+    // ---- 步骤 2：获取微信用户的 OpenID ----
+    console.log('【步骤 2】开始获取用户的微信 OpenID...');
+    const openid = await this.getWechatOpenId();
+    
+    if (!openid) {
+      console.error('【步骤 2-异常】未拉取到有效的 OpenID，无法判定注册状态');
+      this.globalData.isLogin = false;
+      return { isLogin: false };
+    }
+
+    // ---- 步骤 3：提交给 Vendure 校验是否注册 ----
+    console.log('【步骤 3】已取得 OpenID，正在请求 Vendure 校验数据库中的注册状态...');
+    const isRegisteredUser = await this.checkAndLoginWithVendure(openid);
+
+    if (isRegisteredUser) {
+      console.log('【步骤 3-A】该用户已注册过，静默登录成功，Token 刷新。');
+      this.globalData.isLogin = true;
+      return { isLogin: true, openid };
+    } else {
+      console.log('【步骤 3-B】该用户在系统中尚未创建账号 ➡️ 判定为【未注册新用户】');
+      this.globalData.isLogin = false;
+      return { isLogin: false, openid };
+    }
+  },
+
+  /**
+   * 验证本地存储的令牌
+   */
+  verifyToken(token) {
+    return new Promise((resolve) => {
       wx.request({
         url: this.globalData.baseUrl,
         method: 'POST',
         header: {
-          'Authorization': `Bearer ${token}` // 👈 带上本地 Token
+          'Authorization': `Bearer ${token}`
         },
         data: {
           query: `
@@ -144,79 +99,157 @@ App({
         },
         success: (res) => {
           const me = res.data?.data?.me;
-          if (me) {
-            // 【Case 1】Token 依然有效（在 365 天内且没被后台清理）
-            console.log('【Case 1】Token 畅通无阻，欢迎回来，用户 ID:', me.id);
-            this.globalData.isLogin = true;
-            // 执行你小程序后续的业务逻辑，比如触发首页拉取数据
-          } else {
-            // 【Case 2】Token 已过期（me 返回 null）
-            console.log('【Case 2】Token 已过期（服务器返回 null），正在重新获取...');
-            this.doWechatLogin();
-          }
+          resolve(!!me); // me 有数据返回 true，没有（或者为null）则返回 false
         },
         fail: () => {
-          console.error('网络请求失败，可能是局域网断了');
+          console.error('网络校验请求失败，默认 Token 失效');
+          resolve(false);
         }
       });
-    },
-  
-    // 2. 微信一键登录/注册核心（换取新 Token）
-    doWechatLogin: function () {
-      // 💡 实际业务中，先调用 wx.login() 拿到 code，然后发给你们自己的后端去微信换 openId
-      // 这里我们直接用你已经在 REST Client 里跑通的测试 openId
-      const mockOpenId = "ojaJ13YlqeIniIi0fOLtcHGf_e74"; 
-      
+    });
+  },
+
+  /**
+   * 通过 FastAPI 或者缓存获取用户 OpenID
+   */
+  getWechatOpenId() {
+    return new Promise((resolve) => {
+      // 优先读取本地持久化缓存
+      let myOpenId = wx.getStorageSync("openid");
+      if (myOpenId) {
+        this.globalData.openid = myOpenId;
+        console.log("【OpenID】从本地 Storage 读取成功");
+        return resolve(myOpenId);
+      }
+
+      // 本地没有，执行原生微信登录换取
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            console.log("微信临时登录凭证 code 换取成功:", res.code);
+            wx.request({
+              url: `${config.fastapiUrl}/api/checkYcgpLoginStatus`,
+              method: 'POST',
+              data: { code: res.code },
+              success: (backendRes) => {
+                const fetchedOpenid = backendRes.data?.openid;
+                if (fetchedOpenid) {
+                  wx.setStorageSync('openid', fetchedOpenid);
+                  this.globalData.openid = fetchedOpenid;
+                  
+                  // 同步尝试获取用户的授权配置
+                  wx.getSetting({
+                    success: (settingRes) => {
+                      this.globalData.userInfo = settingRes.authSetting;
+                    }
+                  });
+                  resolve(fetchedOpenid);
+                } else {
+                  resolve(null);
+                }
+              },
+              fail: (err) => {
+                console.error('FastAPI 换取 Openid 接口网络请求失败:', err);
+                resolve(null);
+              }
+            });
+          } else {
+            console.error('微信原生 wx.login 失败:', res.errMsg);
+            resolve(null);
+          }
+        },
+        fail: () => resolve(null)
+      });
+    });
+  },
+
+  /**
+   * 向 Vendure 发起不带注册权限的静默登录校验
+   */
+  checkAndLoginWithVendure(openid) {
+    return new Promise((resolve) => {
       wx.request({
         url: this.globalData.baseUrl,
         method: 'POST',
         data: {
           query: `
-            mutation AuthenticateWithWechat($openId: String!) {
+            mutation CheckOrLogin($openId: String!) {
               authenticate(input: { wechat: { openId: $openId } }) {
+                __typename
                 ... on CurrentUser {
                   id
+                }
+                ... on InvalidCredentialsError {
+                  errorCode
+                  message
                 }
               }
             }
           `,
-          variables: {
-            openId: mockOpenId
-          }
+          variables: { openId: openid }
         },
         success: (res) => {
-          // 💡 核心：从 Vendure 的响应头中摘出全新 Token
-          // 注意：有些微信基础库会把 header 的 key 变成小写，做个兼容处理
-          const token = res.header['vendure-auth-token'] || res.header['Vendure-Auth-Token'];
-          
-          if (token) {
-            wx.setStorageSync('vendure-auth-token', token);
-            this.globalData.isLogin = true;
-            console.log('🚀 全新 Token 已成功存入 Storage！');
+          const authData = res.data?.data?.authenticate;
+          const typeName = authData?.__typename;
+
+          if (typeName === 'InvalidCredentialsError') {
+            // 捕获到后端策略由于没有设置 signUp 抛出的凭证失效错误，确认为未注册
+            resolve(false);
+          } else if (typeName === 'CurrentUser' && authData?.id) {
+            // 已有账号，登录成功，提取 Response Headers 里的全新 Vendure Token
+            const token = res.header['vendure-auth-token'] || res.header['Vendure-Auth-Token'];
+            if (token) {
+              wx.setStorageSync('vendure-auth-token', token);
+              resolve(true);
+            } else {
+              console.error('已通过鉴权，但 Response Header 中无 vendure-auth-token');
+              resolve(false);
+            }
           } else {
-            console.error('登录成功但未在 Headers 中找到 vendure-auth-token');
+            resolve(false);
           }
+        },
+        fail: () => {
+          console.error('请求 Vendure 身份校验网关故障');
+          resolve(false);
         }
       });
-    },
+    });
+  },
 
-  // 2026-05-19 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-
-  // checkLoginStatus() {
-  //   const token = wx.getStorageSync('vendure_token');
-  //   const customerInfo = wx.getStorageSync('customer_info');
-
-  //   if (token) {
-  //     this.globalData.token = token;
-  //     this.globalData.customerInfo = customerInfo;
-  //   }
-  // },
+  // ~~~~~~~~~~~~~~~~~~~~ 系统工具初始化模块 ~~~~~~~~~~~~~~~~~~~~
 
   initChannel() {
     this.channelToken = config.CHANNEL_TOKEN;
+  },
+
+  initCloud() {
+    try {
+      const mycloud = new wx.cloud.Cloud({
+        resourceAppid: config.cloudAppId,
+        resourceEnv: config.cloudEnvId
+      });
+
+      mycloud.init().then(() => {
+        console.log('共享云环境初始化成功 ✔');
+      }).catch(err => {
+        console.error('初始化共享云失败 ❌', err);
+      });
+
+      this.cloud = mycloud;
+    } catch (e) {
+      console.error('云开发模块发生异常', e);
+    }
+  },
+
+  getSystemInfo() {
+    try {
+      const windowInfo = wx.getWindowInfo();
+      this.globalData.windowHeight = windowInfo.windowHeight;
+      this.globalData.windowWidth = windowInfo.windowWidth;
+    } catch (e) {
+      console.error('获取设备屏幕尺寸失败', e);
+    }
   },
 
   async login(code) {
@@ -240,10 +273,12 @@ App({
         return response.data;
       }
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Native login failed:', error);
       return null;
     }
   },
+
+  // ~~~~~~~~~~~~~~~~~~~~ 购物车核心数据驱动方法 ~~~~~~~~~~~~~~~~~~~~
 
   setCartItems(items) {
     this.globalData.cartItems = items;

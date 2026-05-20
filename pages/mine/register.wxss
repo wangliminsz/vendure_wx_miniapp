@@ -1,146 +1,150 @@
+/* 全局容器：工业风背景 + 规范边距 */
 page {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #ffffff;
+  background-color: #F5F7FA;
+  min-height: 100vh;
 }
 
-/* 页面标题 */
-.page-title {
-  text-align: center;
-  font-size: 34rpx;
-  font-weight: 500;
-  margin: 32rpx 0;
-}
-
-.section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding: 0 32rpx;
+.page-container {
+  padding: 40rpx 32rpx 80rpx;
   box-sizing: border-box;
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* 头像行 + 昵称行 统一对齐规则（核心修复） */
-.myavatar-wrapper, .nickname-wrapper {
+/* 页面标题：规范字体层级 */
+.page-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1D2129;
+  margin-bottom: 40rpx;
+  text-align: center;
+}
+
+/* 表单卡片：工业风核心容器 */
+.form-card {
+  width: 100%;
+  max-width: 680rpx;
+  background: #fff;
+  border-radius: 16rpx; /* 8px 规范 */
+  padding: 0 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.06);
+  border: 1rpx solid #E5E6EB;
+  margin-bottom: 32rpx;
+  box-sizing: border-box;
+}
+
+/* 表单项：统一对齐规则，彻底解决对齐问题 */
+.form-item {
   display: flex;
-  /* justify-content: space-between; */
   align-items: center;
   width: 100%;
-  padding: 32rpx 0;
+  padding: 36rpx 0;
   border-bottom: 1rpx solid #E5E6EB;
+  box-sizing: border-box;
 }
 
-.nickname-label {
-  font-size: 32rpx;
-  color: #333;
+/* 最后一项去掉下边框 */
+.form-item:last-child {
+  border-bottom: none;
+}
+
+/* 头像项特殊布局 */
+.avatar-item {
+  justify-content: space-between;
+}
+
+/* 标签：统一宽度，像素级左对齐 */
+.form-label {
+  font-size: 30rpx;
   font-weight: 500;
-  line-height: 1;
+  color: #1D2129;
+  width: 180rpx;
+  flex-shrink: 0;
 }
 
-/* 头像按钮严格居中 */
-.avatar_button {
+/* 输入框：统一右对齐，宽度一致 */
+.form-input {
+  flex: 1;
+  font-size: 30rpx;
+  color: #4E5969;
+  text-align: right;
+  line-height: 1.4;
+  padding: 0;
+  background: transparent;
+}
+
+.input-placeholder {
+  color: #86909C !important;
+  font-size: 28rpx;
+}
+
+/* 头像按钮：规范尺寸，无默认样式 */
+.avatar-btn {
   padding: 0;
   border: none;
   background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   line-height: 1;
 }
-.avatar_button::after {
+.avatar-btn::after {
   border: none;
 }
+
 .avatar {
   width: 120rpx;
   height: 120rpx;
-  border-radius: 60rpx;
-  background-color: #f5f5f5;
+  border-radius: 50%;
+  background: #F2F3F5;
+  border: 2rpx solid #E5E6EB;
 }
 
-/* 昵称输入框严格右对齐，和头像位置匹配 */
-.nickname-input {
-  font-size: 32rpx;
-  color: #333;
-  text-align: right;
-  background: transparent;
-  padding: 0;
-  line-height: 1;
-}
-.nickname-placeholder {
-  color: #999 !important;
-  font-size: 30rpx;
-}
-
-/* 协议勾选居中 */
-.agreement-container {
-  margin-top: 50px;
-  /* margin-bottom: 50rpx; */
+/* 协议勾选框：工业风优化 */
+.agreement-box {
   width: 100%;
-  display: flex;
-  justify-content: center;
+  max-width: 680rpx;
+  margin-top: 50rpx;
+  margin-bottom: 60rpx;
 }
-.checkbox {
+
+.agreement-label {
   display: flex;
-  align-items: center;
-  font-size: 28rpx;
-  color: #666;
+  align-items: flex-start;
+  font-size: 26rpx;
+  color: #4E5969;
+  line-height: 1.5;
 }
-.link {
-  color: #007AFF;
+
+.agreement-text {
+  margin: 0 8rpx;
+}
+
+.agreement-link {
+  color: #165DFF;
   margin: 0 4rpx;
 }
 
-/* 提交按钮居中 */
-.loginbtn {
+/* 提交按钮：严格遵循工业风规范 */
+.submit-btn {
   width: 100%;
-  /* max-width: 520rpx; */
-  /* height: 96rpx; */
-  background-color: #165DFF;
-  color: #ffffff;
-  /* font-size: 32rpx; */
-  /* font-weight: bold; */
-  /* border: none; */
-  /* border-radius: 12rpx; */
-  margin-top: 50px;
+  max-width: 680rpx;
+  height: 96rpx; /* ≥44px 规范 */
+  background: #165DFF;
+  color: #fff;
+  border-radius: 16rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 4rpx 12rpx rgba(22, 93, 255, 0.2);
 }
-.loginbtn::after {
+
+/* 按钮默认样式清除 */
+.submit-btn::after {
   border: none;
 }
-.loginbtn[disabled] {
-  background-color: #cccccc;
-  color: #999;
+
+/* 禁用状态：规范灰色 */
+.submit-btn[disabled] {
+  background: #C9CDD4;
+  color: #86909C;
+  box-shadow: none;
 }
-
-/* 底部协议链接居中 */
-/* .user_container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 48rpx;
-} */
-
-.user_container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  /* padding: 200rpx 0; */
-  box-sizing: border-box;
-  color: #000 !important
-} 
-
-.link {
-  color: #007AFF;
-  display: inline;
-}
-
-/* .user_container .link {
-  font-size: 28rpx;
-  color: #007AFF;
-  margin-bottom: 16rpx;
-} */
