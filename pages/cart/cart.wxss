@@ -1,153 +1,221 @@
+/* ==============================
+   全局规范：蓝橙主色调统一
+============================== */
 .container {
   min-height: 100vh;
-  background-color: #F2F3F5;
-  padding-bottom: 120rpx;
+  background-color: #F7F8FA;
+  padding-bottom: 140rpx;
 }
 
+/* 同步状态提示：橙色调，呼应主题 */
+.sync-status {
+  background-color: #FFF7E6;
+  padding: 20rpx 32rpx;
+  text-align: center;
+  border-bottom: 1rpx solid #FFE082;
+}
+.sync-text {
+  font-size: 26rpx;
+  color: #FF7D00;
+}
+
+/* 加载状态：主色蓝 */
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.9);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+}
+.loading-content {
+  display: flex; flex-direction: column; align-items: center;
+}
+.loading-spinner {
+  width: 50rpx; height: 50rpx;
+  border: 3rpx solid #E5E6EB;
+  border-top-color: #165DFF;
+  border-radius: 50%;
+  animation: spin 0.8s infinite linear;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.loading-text {
+  font-size: 28rpx;
+  color: #86909C;
+  margin-top: 16rpx;
+}
+
+/* ==============================
+   购物车列表
+============================== */
 .cart-list {
   padding: 16rpx;
 }
 
 .cart-item {
-  background-color: #ffffff;
-  border-radius: 12rpx;
-  padding: 24rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
   margin-bottom: 16rpx;
   display: flex;
-  gap: 16rpx;
-  align-items: flex-start;
+  align-items: center;
+  gap: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+  border: 1rpx solid #F2F2F2;
+  transition: all 0.2s ease;
 }
 
-.item-checkbox {
-  padding-top: 60rpx;
+.cart-item:active {
+  transform: scale(0.99);
 }
 
+/* 商品图片 */
 .item-image {
-  width: 200rpx;
-  height: 200rpx;
+  width: 160rpx;
+  height: 160rpx;
   border-radius: 12rpx;
-  background-color: #f5f5f5;
-  flex-shrink: 0;
+  background: #F7F8FA;
+  object-fit: cover;
+  /* 图片加极淡蓝边框，呼应主色 */
+  border: 1rpx solid #E8F3FF;
 }
 
+/* 商品信息 */
 .item-info {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 8rpx;
 }
 
 .item-name {
-  font-size: 28rpx;
+  font-size: 30rpx;
+  font-weight: 500;
   color: #1D2129;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  margin-bottom: 8rpx;
+  line-height: 1.4;
 }
 
 .item-sku {
-  font-size: 22rpx;
+  font-size: 24rpx;
   color: #86909C;
-  margin-bottom: 8rpx;
 }
 
 .item-price-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12rpx;
 }
 
 .item-price {
-  font-size: 32rpx;
-  color: #FF4D4F;
-  font-weight: bold;
+  font-size: 34rpx;
+  /* font-weight: bold; */
+  /* 价格用主色蓝，更突出 */
+  color: #165DFF;
 }
 
 .item-stock {
-  font-size: 22rpx;
+  font-size: 24rpx;
   color: #86909C;
 }
 
+/* 数量选择器：蓝橙细节点缀 */
 .quantity-control {
   display: flex;
   align-items: center;
-  background-color: #F2F3F5;
-  border-radius: 8rpx;
+  background: #F7F8FA;
+  border-radius: 12rpx;
   width: fit-content;
+  overflow: hidden;
+  border: 1rpx solid #E5E6EB;
 }
-
 .quantity-btn {
-  width: 64rpx;
-  height: 64rpx;
+  width: 60rpx;
+  height: 60rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
+  font-size: 28rpx;
   color: #1D2129;
+  transition: all 0.2s ease;
 }
-
+.quantity-btn:active {
+  background-color: #E8F3FF;
+  color: #165DFF;
+}
 .quantity-btn.minus {
   border-right: 1rpx solid #E5E6EB;
 }
-
 .quantity-btn.plus {
   border-left: 1rpx solid #E5E6EB;
 }
-
 .quantity-input {
-  width: 80rpx;
+  width: 70rpx;
   text-align: center;
-  font-size: 28rpx;
+  font-size: 26rpx;
   color: #1D2129;
 }
 
+/* 删除按钮：橙色小圆X，完美落地你的需求 */
 .item-delete {
-  padding: 8rpx 16rpx;
-  font-size: 24rpx;
-  color: #FF4D4F;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background-color: #FFF7E6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.item-delete:active {
+  background-color: #FFE8CC;
+  transform: scale(0.95);
+}
+.delete-icon {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #FF7D00;
+  line-height: 1;
 }
 
+/* ==============================
+   空状态
+============================== */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 200rpx 0;
-}
-
-.empty-state image {
-  width: 240rpx;
-  height: 240rpx;
-  margin-bottom: 32rpx;
-}
-
-.empty-state text {
   color: #86909C;
   font-size: 28rpx;
-  margin-bottom: 32rpx;
 }
-
 .go-shopping-btn {
-  background-color: #165DFF;
-  color: #ffffff;
+  margin-top: 32rpx;
+  background: #165DFF;
+  color: #fff;
   padding: 24rpx 64rpx;
-  border-radius: 44rpx;
-  font-size: 32rpx;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  transition: all 0.2s ease;
+}
+.go-shopping-btn:active {
+  opacity: 0.9;
+  transform: scale(0.98);
 }
 
+/* ==============================
+   底部工具栏：蓝橙重点强化
+============================== */
 .bottom-bar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #ffffff;
-  padding: 16rpx 32rpx;
-  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  bottom: 0; left: 0; right: 0;
+  background: #fff;
+  padding: 20rpx 32rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   display: flex;
   align-items: center;
-  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -2rpx 12rpx rgba(0,0,0,0.06);
 }
 
 .select-all {
@@ -162,24 +230,22 @@
   flex: 1;
   margin-left: 24rpx;
 }
-
 .total-row {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 8rpx;
 }
-
 .total-label {
   font-size: 28rpx;
   color: #1D2129;
 }
-
 .total-price {
-  font-size: 36rpx;
-  color: #FF4D4F;
-  font-weight: bold;
+  font-size: 38rpx;
+  /* font-weight: bold; */
+  /* 合计价格用橙色，和删除按钮呼应，视觉焦点统一 */
+  /* color: #FF7D00; */
+  color: #165DFF;
 }
-
 .total-hint {
   font-size: 22rpx;
   color: #86909C;
@@ -188,15 +254,20 @@
 }
 
 .checkout-btn {
-  background-color: #165DFF;
-  color: #ffffff;
+  background: #165DFF;
+  color: #fff;
   padding: 24rpx 48rpx;
-  border-radius: 44rpx;
-  font-size: 32rpx;
+  border-radius: 16rpx;
+  font-size: 30rpx;
   font-weight: 500;
   margin-left: 16rpx;
+  border: none;
+  transition: all 0.2s ease;
 }
-
+.checkout-btn:active {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
 .checkout-btn[disabled] {
-  background-color: #86909C;
+  background: #94A3B8;
 }

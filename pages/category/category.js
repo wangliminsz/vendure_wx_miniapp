@@ -29,20 +29,9 @@ Page({
   },
 
   onShow() {
-    this.updateCartBadge();
-  },
-
-  updateCartBadge() {
-    const cartCount = app.getCartCount();
-    if (cartCount > 0) {
-      wx.setTabBarBadge({
-        index: 2,
-        text: String(cartCount),
-      });
-    } else {
-      wx.removeTabBarBadge({
-        index: 2,
-      });
+    app.updateCartBadge();
+    if (app.globalData.isLogin) {
+      app.syncServerCartCount();
     }
   },
 
@@ -137,6 +126,7 @@ Page({
           return {
             id: item.id,
             name: item.name,
+            productSlug: product.slug || '',
             brand: product.name || '',
             sku: item.sku || '',
             price: formatPrice(item.priceWithTax, item.currencyCode).replace('¥', ''),
@@ -195,6 +185,7 @@ Page({
           return {
             id: item.id,
             name: item.name,
+            productSlug: product.slug || '',
             brand: product.name || '',
             sku: item.sku || '',
             price: formatPrice(item.priceWithTax, item.currencyCode).replace('¥', ''),
@@ -250,9 +241,17 @@ Page({
 
   goToProduct(e) {
     const productId = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: `/pages/product/product?id=${productId}`,
-    });
+    const productSlug = e.currentTarget.dataset.slug;
+    
+    if (productSlug) {
+      wx.navigateTo({
+        url: `/pages/variant/variant?productSlug=${productSlug}&variantId=${productId}`,
+      });
+    } else {
+      wx.navigateTo({
+        url: `/pages/product/product?id=${productId}`,
+      });
+    }
   },
 
   onAddToCart(e) {
@@ -300,6 +299,7 @@ Page({
           return {
             id: item.id,
             name: item.name,
+            productSlug: product.slug || '',
             brand: product.name || '',
             sku: item.sku || '',
             price: formatPrice(item.priceWithTax, item.currencyCode).replace('¥', ''),

@@ -44,6 +44,7 @@ App({
       if (isValid) {
         console.log('【步骤 1-成功】Token 依然有效，老用户免密进入首页');
         this.globalData.isLogin = true;
+        setTimeout(() => { this.syncServerCartCount(); }, 300);
         return { isLogin: true, openid: wx.getStorageSync('openid') };
       }
       
@@ -68,6 +69,7 @@ App({
     if (isRegisteredUser) {
       console.log('【步骤 3-A】该用户已注册过，静默登录成功，Token 刷新。');
       this.globalData.isLogin = true;
+      setTimeout(() => { this.syncServerCartCount(); }, 300);
       return { isLogin: true, openid };
     } else {
       console.log('【步骤 3-B】该用户在系统中尚未创建账号 ➡️ 判定为【未注册新用户】');
@@ -348,7 +350,45 @@ App({
   getCartCount() {
     const cartItems = this.getCartItems();
     return cartItems.reduce((count, item) => {
-      return count + (item.selected ? item.quantity : 0);
+      return count + item.quantity;
     }, 0);
+  },
+
+  updateCartBadge() {
+    const cartCount = this.globalData.cartTotalCount || this.getCartCount();
+    console.log('updateCartBadge - cartCount:', cartCount);
+    if (cartCount > 0) {
+      wx.setTabBarBadge({
+        index: 2,
+        text: String(cartCount),
+      });
+    } else {
+      wx.removeTabBarBadge({
+        index: 2,
+      });
+    }
+  },
+
+  async syncServerCartCount() {
+    if (!this.globalData.isLogin) return;
+    
+    try {
+      const { graphqlClient } = require('./utils/api.js');
+      const query = `
+        query GetActiveOrder {
+          activeOrder {
+            totalQuantity
+          }
+        }
+      `;
+      const data = await graphqlClient.query(query);
+      console.log('syncServerCartCount - data:', data);
+      if (data?.activeOrder?.totalQuantity !== undefined) {
+        this.globalData.cartTotalCount = data.activeOrder.totalQuantity;
+        this.updateCartBadge();
+      }
+    } catch (error) {
+      console.error('同步服务器购物车数量失败:', error);
+    }
   },
 });

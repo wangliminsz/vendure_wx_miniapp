@@ -12,7 +12,7 @@ class GraphQLClient {
       'Content-Type': 'application/json',
     };
 
-    const authToken = token || this.authToken || wx.getStorageSync('vendure_token');
+    const authToken = token || this.authToken || wx.getStorageSync('vendure-auth-token');
     if (authToken) {
       headers['Authorization'] = `Bearer ${authToken}`;
     }
@@ -51,23 +51,24 @@ class GraphQLClient {
           console.log('GraphQL Response Status:', res.statusCode);
           console.log('GraphQL Response Headers:', res.header);
           console.log('GraphQL Response Data:', res.data);
-          if (res.statusCode === 200) {
-            const result = res.data;
+          
+          const result = res.data;
 
-            if (result.errors) {
-              console.error('GraphQL errors:', result.errors);
-              reject(new Error(result.errors[0].message));
-            } else {
-              if (result.data) {
-                const vendureToken = res.header['vendure-auth-token'];
-                if (vendureToken) {
-                  wx.setStorageSync('vendure_token', vendureToken);
-                }
+          if (result && result.errors) {
+            console.error('GraphQL errors:', result.errors);
+            const errorMessages = result.errors.map(err => err.message).join('; ');
+            reject(new Error(errorMessages));
+          } else if (res.statusCode === 200) {
+            if (result.data) {
+              const vendureToken = res.header['vendure-auth-token'];
+              if (vendureToken) {
+                wx.setStorageSync('vendure-auth-token', vendureToken);
               }
-              resolve(result.data || {});
             }
+            resolve(result.data || {});
           } else {
-            reject(new Error(`HTTP error: ${res.statusCode}`));
+            const errorMsg = result?.message || `HTTP error: ${res.statusCode}`;
+            reject(new Error(errorMsg));
           }
         },
         fail: (error) => {

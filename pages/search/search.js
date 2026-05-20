@@ -121,6 +121,7 @@ Page({
         const products = result.items.map(item => ({
           id: item.productVariantId,
           name: item.productVariantName || item.productName,
+          productSlug: item.productSlug || '',
           brand: item.productName || '',
           sku: item.sku || '',
           price: (item.priceWithTax / 100).toFixed(2),
@@ -153,8 +154,16 @@ Page({
 
   goToProduct(e) {
     const productId = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: `/pages/product/product?id=${productId}`,
-    });
+    const productSlug = e.currentTarget.dataset.slug;
+    
+    if (productSlug) {
+      wx.navigateTo({
+        url: `/pages/variant/variant?productSlug=${productSlug}&variantId=${productId}`,
+      });
+    } else {
+      wx.navigateTo({
+        url: `/pages/product/product?id=${productId}`,
+      });
+    }
   },
 });

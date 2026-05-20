@@ -32,7 +32,10 @@ Page({
   },
 
   onShow() {
-    this.updateCartBadge();
+    app.updateCartBadge();
+    if (app.globalData.isLogin) {
+      app.syncServerCartCount();
+    }
   },
 
   onPullDownRefresh() {
@@ -42,20 +45,6 @@ Page({
     });
     this.loadCollections();
     wx.stopPullDownRefresh();
-  },
-
-  updateCartBadge() {
-    const cartCount = app.getCartCount();
-    if (cartCount > 0) {
-      wx.setTabBarBadge({
-        index: 2,
-        text: String(cartCount),
-      });
-    } else {
-      wx.removeTabBarBadge({
-        index: 2,
-      });
-    }
   },
 
   goToSearch() {

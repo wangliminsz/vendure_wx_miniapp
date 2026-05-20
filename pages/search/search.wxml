@@ -63,7 +63,7 @@
     </view>
 
     <view class="product-list">
-      <view class="product-item" wx:for="{{searchResults}}" wx:key="id" bindtap="goToProduct" data-id="{{item.id}}">
+      <view class="product-item" wx:for="{{searchResults}}" wx:key="id" bindtap="goToProduct" data-id="{{item.id}}" data-slug="{{item.productSlug}}">
         <image src="{{item.image}}" mode="aspectFill" class="product-image"></image>
         <view class="product-info">
           <text class="product-name">{{item.name}}</text>

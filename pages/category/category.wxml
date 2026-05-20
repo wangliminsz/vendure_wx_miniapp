@@ -1,11 +1,18 @@
 <view class="container">
   <!-- 搜索栏 -->
-  <view class="search-bar">
+  <!-- <view class="search-bar">
     <view class="search-input" bindtap="goToSearch">
       <image src="/static/icons/search.png" mode="aspectFit" style="width: 32rpx; height: 32rpx;"></image>
       <input type="text" placeholder="搜索型号/品牌/编码" disabled />
     </view>
-  </view>
+  </view> -->
+
+  <view class="search-bar">
+    <view class="search-input" bindtap="goToSearch">
+      <image src="/static/icons/search.png" mode="aspectFit"></image>
+      <input type="text" placeholder="搜索型号/品牌/编码" disabled placeholder-style="color:#86909C" />
+    </view>
+</view>
 
   <!-- 分类内容 -->
   <view class="category-content">
@@ -20,7 +27,7 @@
     <scroll-view class="category-right" scroll-y enhanced bindscrolltolower="onReachBottom" bindscroll="onScroll" scroll-top="{{scrollTop}}" lower-threshold="50">
       <!-- 商品列表 -->
       <view class="product-list">
-        <view class="product-item" wx:for="{{products}}" wx:key="id" bindtap="goToProduct" data-id="{{item.id}}">
+        <view class="product-item" wx:for="{{products}}" wx:key="id" bindtap="goToProduct" data-id="{{item.id}}" data-slug="{{item.productSlug}}">
           <view class="product-gap">
             <image src="{{item.image}}" mode="aspectFill" class="product-image"></image>
           </view>

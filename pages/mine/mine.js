@@ -51,6 +51,12 @@ Page({
       isLogin: app.globalData.isLogin
     });
     this.readLocalStorageInfo();
+    
+    // 更新购物车徽章
+    app.updateCartBadge();
+    if (app.globalData.isLogin) {
+      app.syncServerCartCount();
+    }
   },
 
   /**

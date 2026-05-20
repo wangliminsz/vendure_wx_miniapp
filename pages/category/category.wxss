@@ -5,24 +5,31 @@
   flex-direction: column;
 }
 
+/* 外层蓝色背景栏 */
 .search-bar {
   background-color: #165DFF;
-  /* padding: 16rpx 32rpx 24rpx; */
+  /* 给蓝色栏上下加内边距，让搜索框不贴边 */
+  padding: 26rpx 32rpx;
+  /* border-radius: 0 0 16rpx 16rpx; */
 }
 
+/* 搜索框本体：核心圆角在这里 */
 .search-input {
   background-color: #ffffff;
-  /* border-radius: 36rpx; */
+  /* 🔑 关键：16rpx 就是「微圆角、不圆」的最佳值 */
+  /* 数字越小越方，越大越圆：12rpx=很方、16rpx=微圆角、24rpx=接近全圆角 */
+  border-radius: 16rpx;
   height: 72rpx;
   display: flex;
   align-items: center;
-  /* padding: 0 32rpx; */
+  /* 给框内加左右内边距，让图标和文字不贴边 */
+  padding: 0 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
 }
 
 .search-input image {
-  width: 32rpx;
-  height: 32rpx;
-  /* opacity: 0.8; */
+  width: 36rpx;
+  height: 36rpx;
 }
 
 .search-input input {
