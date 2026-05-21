@@ -3,15 +3,7 @@
   <view class="search-bar">
     <view class="search-input-wrapper">
       <image src="/static/icons/search.png" mode="aspectFit" class="search-icon"></image>
-      <input
-        type="text"
-        class="search-input"
-        placeholder="搜索型号/品牌/编码"
-        value="{{searchKeyword}}"
-        bindinput="onSearchInput"
-        bindconfirm="onSearchConfirm"
-        focus
-      />
+      <input type="text" class="search-input" value="{{searchKeyword}}" bindinput="onSearchInput"  placeholder=" 搜索型号/品牌/编码" bindconfirm="onSearchConfirm" focus />
       <view class="search-cancel-btn" bindtap="onCancel">
         <text class="cancel-icon">✕</text>
       </view>
@@ -30,13 +22,7 @@
         <text class="section-action" bindtap="onClearHistory">清除</text>
       </view>
       <view class="history-tags">
-        <text
-          class="history-tag"
-          wx:for="{{searchHistory}}"
-          wx:key="index"
-          bindtap="onHistoryTap"
-          data-keyword="{{item}}"
-        >{{item}}</text>
+        <text class="history-tag" wx:for="{{searchHistory}}" wx:key="index" bindtap="onHistoryTap" data-keyword="{{item}}">{{item}}</text>
       </view>
     </view>
 
@@ -46,34 +32,22 @@
         <text class="section-title">热门搜索</text>
       </view>
       <view class="hot-list">
-        <view
-          class="hot-item"
-          wx:for="{{hotSearch}}"
-          wx:key="index"
-          bindtap="onHistoryTap"
-          data-keyword="{{item.keyword}}"
-        >
+        <view class="hot-item" wx:for="{{hotSearch}}" wx:key="index" bindtap="onHistoryTap" data-keyword="{{item.keyword}}">
           <text class="hot-rank {{index < 3 ? 'top' : ''}}">{{index + 1}}</text>
           <view class="hot-info">
             <text class="hot-keyword">{{item.keyword}}</text>
-            <text class="hot-count">{{item.count}}次搜索</text>
+            <text class="hot-count">{{item.count}} 次搜索</text>
           </view>
         </view>
       </view>
     </view>
 
     <!-- 搜索结果 SCROLL-VIEW -->
-    <scroll-view 
-      class="search-results" 
-      wx:if="{{showSearchResults}}" 
-      scroll-y 
-      bindscrolltolower="onReachBottom" 
-      bindscroll="onScroll" 
-      scroll-top="{{scrollTop}}" 
-      lower-threshold="50"
-    >
+    <scroll-view class="search-results" wx:if="{{showSearchResults}}" scroll-y bindscrolltolower="onReachBottom" bindscroll="onScroll" scroll-top="{{scrollTop}}" lower-threshold="50">
+      <!-- 搜索结果头部 -->
       <view class="results-header">
-        <text>找到 {{totalResults}} 个结果</text>
+        <text wx:if="{{loading}}">搜索中...</text>
+        <text wx:elif="{{isSearchInitiated}}">找到 {{totalResults}} 个结果</text>
       </view>
 
       <view class="product-list">
@@ -81,36 +55,35 @@
           <image src="{{item.image}}" mode="aspectFill" class="product-image" lazy-load></image>
           <view class="product-info">
             <text class="product-name">{{item.name}}</text>
-            <text class="product-brand">{{item.productName}}</text>
-            <text class="product-sku">编码: {{item.sku}}</text>
+
+            <view class="flex justify-between" style="margin-bottom: 12rpx;">
+              <view>
+                <text class="product-brand">{{item.productName}}</text>
+              </view>
+              <view>
+                <text class="product-sku">{{item.sku}}</text>
+              </view>
+            </view>
+
             <view class="product-tags" wx:if="{{item.options.length > 0}}">
               <text class="product-tag" wx:for="{{item.options}}" wx:for-item="option" wx:key="id">{{option.name}}</text>
             </view>
             <view class="product-footer">
-              <text class="product-price">¥{{item.price}}</text>
-              <text class="product-add-btn" catchtap="onAddToCart" data-item="{{item}}">加入采购车</text>
+              <text class="product-price">¥ {{item.price}}</text>
             </view>
           </view>
         </view>
       </view>
 
-      <view class="empty-state" wx:if="{{!loading && searchResults.length === 0}}">
-        <image src="/static/images/empty-search.png" mode="aspectFit"></image>
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{showSearchResults && isSearchInitiated && totalResults === 0 && !loading}}">
         <text>未找到相关商品</text>
       </view>
     </scroll-view>
   </view>
 
   <!-- 回到顶部按钮 -->
-  <!-- <view class="back-to-top {{showBackToTop ? 'show' : ''}}" bindtap="scrollToTop">
-    <text class="arrow">↑</text>
-  </view> -->
-
-  <!-- 回到顶部按钮 -->
   <view wx:if="{{showBackToTop}}" class="back-to-top" bindtap="scrollToTop">
-      <image src="/static/images/up-arrow.svg" mode="aspectFit" class="back-to-top-icon"></image>
-    </view>
-
-
-
+    <image src="/static/images/up-arrow.svg" mode="aspectFit" class="back-to-top-icon"></image>
+  </view>
 </view>

@@ -352,9 +352,17 @@ Page({
     this.setData({ scrollTop: 0 });
   },
 
+  // goToSearch() {
+  //   wx.navigateTo({
+  //     url: '/pages/search/search',
+  //   });
+  // },
+
   goToSearch() {
-    wx.navigateTo({
-      url: '/pages/search/search',
-    });
-  },
+    wx.switchTab({
+      url: '/pages/search/search'
+    })
+  }
+
+
 });

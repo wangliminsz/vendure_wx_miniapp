@@ -12,6 +12,8 @@
     </view>
   </view>
 
+  <!-- {{cartItems.length > 0}} -->
+
   <!-- 采购车列表 -->
   <view class="cart-list" wx:if="{{cartItems.length > 0}}">
     <view class="cart-item" wx:for="{{cartItems}}" wx:key="variantId">

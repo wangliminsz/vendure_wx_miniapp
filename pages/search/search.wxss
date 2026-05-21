@@ -62,15 +62,15 @@
 }
 
 .search-cancel-btn {
-  width: 48rpx;
-  height: 48rpx;
+  width: 32rpx;
+  height: 32rpx;
   border-radius: 50%;
-  border: 2rpx solid rgba(100, 100, 100, 0.5);
+  /* border: 2rpx solid rgba(100, 100, 100, 0.5); */
   background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 16rpx;
+  /* margin-left: 16rpx; */
 }
 
 .cancel-icon {
@@ -235,7 +235,7 @@
   font-size: 30rpx;
   font-weight: 600;
   color: #1D2129;
-  margin-bottom: 8rpx;
+  /* margin-bottom: 8rpx; */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -244,13 +244,13 @@
 .product-brand {
   font-size: 24rpx;
   color: #86909C;
-  margin-bottom: 8rpx;
+  /* margin-bottom: 8rpx; */
 }
 
 .product-sku {
   font-size: 22rpx;
   color: #86909C;
-  margin-bottom: 12rpx;
+  /* margin-bottom: 12rpx; */
 }
 
 .product-tags {
@@ -276,8 +276,10 @@
 }
 
 .product-price {
-  font-size: 32rpx;
+  /* font-size: 32rpx;
   font-weight: 600;
+  color: #165DFF; */
+  font-size: 34rpx;
   color: #165DFF;
 }
 

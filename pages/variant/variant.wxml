@@ -94,11 +94,11 @@
       <view class="action-icons">
         <view class="action-icon-item" bindtap="goHome">
           <image src="/static/tabbar/home-n.png" mode="aspectFit"></image>
-          <text>首页</text>
+          <!-- <text>首页</text> -->
         </view>
-        <view class="action-icon-item" bindtap="goToCart">
+        <view class="action-icon-item cart-icon" bindtap="goToCart">
           <image src="/static/tabbar/cart-n.png" mode="aspectFit"></image>
-          <text>采购车</text>
+          <view wx:if="{{cartCount > 0}}" class="cart-badge">{{cartCount > 99 ? '99+' : cartCount}}</view>
         </view>
       </view>
       <view class="action-buttons">

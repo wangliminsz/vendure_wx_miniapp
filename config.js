@@ -29,13 +29,16 @@ const config = {
 
   avatarImg: "/static/images/get_avatar.png",
   cloudEnvId: "bkkschool-1304214433-4bo349633e7",
-  cloudAppId: 'wx65ce07b8050f8ae4'
+  cloudAppId: 'wx65ce07b8050f8ae4',
 
-   // 实例化共享环境
-  //  const mycloud = new wx.cloud.Cloud({
-  //   resourceAppid: 'wx65ce07b8050f8ae4', // 资源方AppID
-  //   resourceEnv: 'bkkschool-1304214433-4bo349633e7' // 共享给你的环境ID
-  // })
+  hotSearch: [
+    { keyword: 'Computer', count: 1005 },
+    { keyword: 'Plant', count: 986 },
+    { keyword: '电动工具', count: 854 },
+    { keyword: '密封圈', count: 765 },
+    { keyword: '劳保手套', count: 654 },
+    { keyword: '螺丝套装', count: 543 },
+  ],
   
 };
 

@@ -396,12 +396,12 @@ App({
     console.log('updateCartBadge - cartCount:', cartCount);
     if (cartCount > 0) {
       wx.setTabBarBadge({
-        index: 2,
+        index: 3,
         text: String(cartCount),
       });
     } else {
       wx.removeTabBarBadge({
-        index: 2,
+        index: 3,
       });
     }
   },

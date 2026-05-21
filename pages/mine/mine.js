@@ -7,12 +7,13 @@ Page({
     fastapiUrl: config.fastapiUrl,
     userInfoExist: false,
     userOpenId: '',
-    userAvatarUrl: config.avatarImg,
+    userAvatarUrl: '',
     userNickName: '',
     userName: '',
     userMobile: '',
     userMobileColor: '#707070', 
-    isLogin: false // 标记电商登录状态
+    isLogin: false,
+    isLoading: true
   },
 
   returnToHome: function () {
@@ -24,7 +25,6 @@ Page({
   async onLoad() {
     wx.showLoading({ title: '加载中...', mask: true });
 
-    // ⏳ 核心安全机制：等待 app.js 鉴权控制流完全终结
     await app.loginPromise;
 
     const openid = app.globalData.openid || wx.getStorageSync('openid');
@@ -34,14 +34,17 @@ Page({
       isLogin: app.globalData.isLogin
     });
 
-    // 如果拿到有效的 openid，去同步拉取微信云开发中的个性化资料（如云存储头像）
     if (openid) {
       await this.cloudDbRead(openid);
     }
 
-    // 同步本地缓存兜底显示
     this.readLocalStorageInfo();
     
+    if (!this.data.userAvatarUrl) {
+      this.setData({ userAvatarUrl: config.avatarImg });
+    }
+    
+    this.setData({ isLoading: false });
     wx.hideLoading();
   },
 

@@ -6,15 +6,9 @@ Page({
   data: {
     searchKeyword: '',
     showSearchResults: false,
+    isSearchInitiated: false, // 新增：搜索是否已完成
     searchHistory: [],
-    hotSearch: [
-      { keyword: '不锈钢螺栓', count: 1256 },
-      { keyword: '轴承6205', count: 986 },
-      { keyword: '电动工具', count: 854 },
-      { keyword: '密封圈', count: 765 },
-      { keyword: '劳保手套', count: 654 },
-      { keyword: '螺丝套装', count: 543 },
-    ],
+    hotSearch: config.hotSearch,
     searchResults: [],
     totalResults: 0,
     currentPage: 0,
@@ -67,6 +61,8 @@ Page({
       showSearchResults: true,
       showBackToTop: false,
       scrollTop: 0,
+      isSearchInitiated: false, // 重置标志
+      totalResults: 0,
     });
     this.performSearch(keyword);
   },
@@ -81,6 +77,7 @@ Page({
       showSearchResults: false,
       showBackToTop: false,
       scrollTop: 0,
+      isSearchInitiated: false, // 重置标志
     });
   },
 
@@ -120,6 +117,8 @@ Page({
         pageSize: this.data.pageSize,
       });
 
+      this.setData({ isSearchInitiated: true });
+
       if (result.items && result.items.length > 0) {
         const products = result.items.map(item => ({
           variantId: item.variantId,
@@ -128,7 +127,7 @@ Page({
           productName: item.productName,
           productSlug: item.slug || '',
           sku: item.sku || '',
-          price: ((item.priceWithTax || 0) / 100).toFixed(2),
+          price: ((item.priceWithTax || 0)).toFixed(2),
           image: (item.productAsset && item.productAsset.preview) ? config.baseUrl.replace('/shop-api', '') + '/assets/' + item.productAsset.preview : 'https://via.placeholder.com/200x200',
           options: item.options || [],
         }));
@@ -142,11 +141,15 @@ Page({
       } else {
         this.setData({
           hasMore: false,
-          totalResults: this.data.searchResults.length,
+          totalResults: 0,
         });
       }
     } catch (error) {
       console.error('Search failed:', error);
+      this.setData({
+        isSearchInitiated: true,
+        totalResults: 0,
+      });
     } finally {
       this.setData({ loading: false });
     }
@@ -157,7 +160,6 @@ Page({
   },
 
   onReachBottom() {
-    console.log('onReachBottom triggered, hasMore:', this.data.hasMore, 'loading:', this.data.loading);
     if (this.data.hasMore && !this.data.loading) {
       this.loadMore();
     } else if (!this.data.hasMore) {
@@ -170,31 +172,17 @@ Page({
 
   onScroll(e) {
     const currentScrollTop = e.detail.scrollTop;
-    
-    // console.log('========== onScroll ==========');
-    // console.log('currentScrollTop:', currentScrollTop);
-    // console.log('showBackToTop (before):', this.data.showBackToTop);
-    // console.log('Threshold: 500, shouldShow:', currentScrollTop > 500);
 
     if (currentScrollTop > 500 && !this.data.showBackToTop) {
-      console.log('Setting showBackToTop to TRUE');
       this.setData({ showBackToTop: true });
-      console.log('showBackToTop (after):', this.data.showBackToTop);
     } else if (currentScrollTop <= 500 && this.data.showBackToTop) {
-      console.log('Setting showBackToTop to FALSE');
       this.setData({ showBackToTop: false });
-      console.log('showBackToTop (after):', this.data.showBackToTop);
     }
   },
 
   scrollToTop() {
-    console.log('========== scrollToTop ==========');
-    console.log('scrollTop before:', this.data.scrollTop);
-    
     this.setData({ scrollTop: 1 }, () => {
-      console.log('scrollTop after callback:', this.data.scrollTop);
       this.setData({ scrollTop: 0 });
-      console.log('scrollTop reset to:', this.data.scrollTop);
     });
   },
 

@@ -7,7 +7,7 @@ Page({
     totalPrice: '0.00',
     totalCount: 0,
     isLogin: false,
-    isLoading: false,
+    isLoading: true,
     syncStatus: '',
   },
 
@@ -15,22 +15,37 @@ Page({
     this.initCart();
   },
 
-  onShow() {
+  async onShow() {
+    await app.loginPromise;
     this.loadCart();
   },
 
   async initCart() {
+
     await app.loginPromise;
-    this.setData({ isLogin: app.globalData.isLogin });
-    this.loadCart();
+
+    this.setData({ 
+      isLogin: app.globalData.isLogin 
+    }, () => {
+      this.loadCart();
+    });
+
   },
 
-  loadCart() {
-    if (app.globalData.isLogin) {
-      this.loadServerCart();
-    } else {
-      const cartItems = app.getCartItems();
-      this.updateCartDisplay(cartItems);
+  async loadCart() {
+    // wx.showLoading({ title: '加载中...' });
+    this.setData({ isLoading: true });
+    
+    try {
+      if (app.globalData.isLogin) {
+        await this.loadServerCart();
+      } else {
+        const cartItems = app.getCartItems();
+        this.updateCartDisplay(cartItems);
+      }
+    } finally {
+      // wx.hideLoading();
+      this.setData({ isLoading: false });
     }
   },
 
@@ -115,6 +130,9 @@ Page({
 
     wx.removeStorageSync('cart_items');
     this.setData({ syncStatus: '' });
+    
+    const cartItems = app.getCartItems();
+    this.updateCartDisplay(cartItems);
   },
 
   async checkLocalCartAndSync() {
@@ -128,11 +146,10 @@ Page({
       
       wx.removeStorageSync('cart_items');
       this.setData({ syncStatus: '' });
-      this.loadServerCart();
-    } else {
-      const cartItems = app.getCartItems();
-      this.updateCartDisplay(cartItems);
     }
+    
+    const cartItems = app.getCartItems();
+    this.updateCartDisplay(cartItems);
   },
 
   async addToServerCart(variantId, quantity) {
@@ -241,13 +258,13 @@ Page({
   },
 
   async updateCart(cartItems, isDelete = false, deletedItem = null) {
-    if (app.globalData.isLogin && cartItems.length > 0) {
+    if (app.globalData.isLogin) {
       this.setData({ isLoading: true });
       
       try {
         if (isDelete && deletedItem) {
           await this.removeFromServerCart(deletedItem.id);
-        } else {
+        } else if (cartItems.length > 0) {
           for (const item of cartItems) {
             await this.adjustServerCartQuantity(item.id, item.quantity);
           }

@@ -15,6 +15,7 @@ Page({
     addToCartError: null,
     isAddingToCart: false,
     isLogin: false,
+    cartCount: 0,
   },
 
   onLoad(options) {
@@ -39,7 +40,13 @@ Page({
   async initPage() {
     await app.loginPromise;
     this.setData({ isLogin: app.globalData.isLogin });
+    this.updateCartCount();
     this.fetchVariant();
+  },
+
+  updateCartCount() {
+    const count = app.globalData.cartTotalCount || 0;
+    this.setData({ cartCount: count });
   },
 
   async fetchVariant() {
@@ -383,6 +390,7 @@ Page({
           icon: 'success',
         });
         await app.syncServerCartCount();
+        this.updateCartCount();
       }
     } catch (error) {
       console.error('加入采购车失败:', error);
@@ -413,6 +421,7 @@ Page({
     });
 
     app.updateCartBadge();
+    this.updateCartCount();
   },
 
   updateCartBadge() {
@@ -433,5 +442,9 @@ Page({
     wx.switchTab({
       url: '/pages/cart/cart',
     });
+  },
+
+  onShow() {
+    this.updateCartCount();
   },
 });
