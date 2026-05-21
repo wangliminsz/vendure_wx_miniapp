@@ -153,22 +153,35 @@ const GET_PRODUCT = `
 `;
 
 const SEARCH_PRODUCTS = `
-  query SearchProducts($input: SearchInput!) {
-    search(input: $input) {
-      totalItems
+  query SearchProducts($term: String!, $page: Int, $pageSize: Int) {
+    searchVariantsWithOptions(
+      term: $term
+      page: $page
+      pageSize: $pageSize
+    ) {
+      totalCount
       items {
-        productVariantId
-        productName
-        productSlug
-        productVariantName
-        description
-        priceWithTax
-        currencyCode
+        variantId
         sku
-        stockLevel
-        featuredAsset {
+        variantName
+        price
+        priceWithTax
+        productId
+        productName
+        slug
+        description
+        productAsset {
           id
           preview
+        }
+        variantFacets {
+          id
+          name
+          code
+        }
+        options {
+          id
+          name
         }
       }
     }
@@ -236,19 +249,20 @@ async function getProduct(slug) {
 
 async function searchProducts(keyword, options = {}) {
   try {
-    const defaultOptions = {
+    const variables = {
       term: keyword,
-      take: 20,
-      skip: 0,
-      groupByProduct: false,
+      page: options.page || 1,
+      pageSize: options.pageSize || 20,
     };
-
-    const mergedOptions = { ...defaultOptions, ...options };
-    const data = await graphqlClient.query(SEARCH_PRODUCTS, { input: mergedOptions });
+    console.log('🔍 searchProducts query:', JSON.stringify(variables));
+    
+    const data = await graphqlClient.query(SEARCH_PRODUCTS, variables);
+    
+    // console.log('🔍 searchProducts response:', JSON.stringify(data));
 
     return {
-      items: data.search && data.search.items || [],
-      totalItems: data.search && data.search.totalItems || 0,
+      items: data.searchVariantsWithOptions && data.searchVariantsWithOptions.items || [],
+      totalItems: data.searchVariantsWithOptions && data.searchVariantsWithOptions.totalCount || 0,
     };
   } catch (error) {
     console.error('Failed to search products:', error);

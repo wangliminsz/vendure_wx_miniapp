@@ -1,0 +1,309 @@
+在微信小程序中调用（前端接入）
+现在小程序端不需要再写复杂的嵌套循环去拆分 products.variants 了。在你的搜索页面（例如 search.js）中，可以直接通过 wx.request 发送请求：
+
+页面 JS 代码示例 (search.js)
+JavaScript
+const config = require('../../config.js'); // 引入你的配置
+
+Page({
+  data: {
+    keyword: '',
+    page: 1,
+    pageSize: 12,
+    goodsList: [],
+    totalCount: 0,
+    loading: false
+  },
+
+  // 触发搜索
+  onSearch: function(e) {
+    this.setData({
+      keyword: e.detail.value,
+      page: 1,
+      goodsList: []
+    }, () => {
+      this.fetchVariantData();
+    });
+  },
+
+  // 核心请求逻辑
+  fetchVariantData: function() {
+    if (this.data.loading) return;
+    this.setData({ loading: true });
+
+    wx.request({
+      url: `${config.baseUrl || 'https://your-vendure-domain.com'}/shop-api`, // 你的 Vendure Shop API 地址
+      method: 'POST',
+      header: {
+        'content-type': 'application/json'
+      },
+      data: {
+        query: `
+          query SearchVariants($term: String!, $page: Int, $pageSize: Int) {
+            searchVariantsWithOptions(term: $term, page: $page, pageSize: $pageSize) {
+              totalCount
+              items {
+                variantId
+                sku
+                variantName
+                price
+                priceWithTax
+                productId
+                productName
+                productAsset {
+                  preview
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          term: this.data.keyword,
+          page: this.data.page,
+          pageSize: this.data.pageSize
+        }
+      },
+      success: (res) => {
+        if (res.statusCode === 200 && res.data.data) {
+          const searchData = res.data.data.searchVariantsWithOptions;
+          const newItems = searchData.items;
+          
+          this.setData({
+            totalCount: searchData.totalCount,
+            // 如果是第一页则覆盖，后续页则追加（用于上拉加载更多）
+            goodsList: this.data.page === 1 ? newItems : this.data.goodsList.concat(newItems)
+          });
+        } else {
+          console.error('搜索请求失败', res);
+        }
+      },
+      fail: (err) => {
+        console.error('网络请求异常', err);
+      },
+      complete: () => {
+        this.setData({ loading: false });
+      }
+    });
+  },
+
+  // 页面上拉触底事件（分页加载）
+  onReachBottom: function() {
+    if (this.data.goodsList.length < this.data.totalCount) {
+      this.setData({
+        page: this.data.page + 1
+      }, () => {
+        this.fetchVariantData();
+      });
+    }
+  }
+});
+3. 小程序视图层渲染 (search.wxml)
+由于返回的 items 数组里每一个元素都是独立的库存单品（Sku/Variant），你的列表渲染会变得非常单纯、干净：
+
+XML
+<view class="search-container">
+  <view class="goods-list">
+    <block wx:for="{{goodsList}}" wx:key="variantId">
+      <view class="goods-item" bindtap="goToDetail" data-variant-id="{{item.variantId}}" data-product-id="{{item.productId}}">
+        <image class="goods-img" src="{{item.productAsset.preview || '/images/default-thumbnail.png'}}" mode="aspectFill"></image>
+        
+        <view class="goods-info">
+          <text class="goods-name">{{item.variantName}}</text>
+          <text class="goods-sku">编码: {{item.sku}}</text>
+          <text class="goods-price">￥{{item.priceWithTax}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+  
+  <view class="loading-tips" wx:if="{{goodsList.length >= totalCount && totalCount > 0}}">没有更多单品了~</view>
+</view>
+💡 这样架构带来的核心优势：
+旧系统零感：原本依赖 searchProductsWithOptions 的 PC 端或后台管理系统完全不需要动，逻辑和性能不受任何波及。
+
+完美支持单品直接上架/搜索：小程序用户搜索一个型号，出来的就是直接能加入购物车的单品项，点击即可一键调用你的 app.addToCart()（正如你在 app.js 里定义的逻辑一样），体验流畅度直接拉满。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 1. 搜索单品规格变体 (Search Variants With Options)
+POST {{baseUrl}}
+Content-Type: application/json
+X-Request-Type: GraphQL
+
+query SearchVariants($term: String!, $page: Int, $pageSize: Int) {
+  searchVariantsWithOptions(term: $term, page: $page, pageSize: $pageSize) {
+    totalCount
+    items {
+      variantId
+      sku
+      variantName
+      price
+      priceWithTax
+      productId
+      productName
+      slug
+      description
+      productAsset {
+        id
+        preview
+      }
+      variantFacets {
+        id
+        name
+        code
+      }
+      options {
+        id
+        name
+      }
+    }
+  }
+}
+
+{
+  "term": "Laptop", 
+  "page": 1,
+  "pageSize": 12
+}
+
+
+result: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: vendure-auth-token
+Content-Language: en
+cache-control: no-store
+Content-Type: application/json; charset=utf-8
+Content-Length: 2498
+ETag: W/"9c2-5Jt/IRM+8b5mKpuctFSsNPsyXDQ"
+Date: Wed, 20 May 2026 12:32:35 GMT
+Connection: close
+
+{
+  "data": {
+    "searchVariantsWithOptions": {
+      "totalCount": 4,
+      "items": [
+        {
+          "variantId": "1",
+          "sku": "L2201308",
+          "variantName": "Laptop 13 inch 8GB",
+          "price": 1299,
+          "priceWithTax": 1558.8,
+          "productId": "1",
+          "productName": "Laptop",
+          "slug": "laptop",
+          "description": "Now equipped with seventh-generation Intel Core processors, Laptop is snappier than ever. From daily tasks like launching apps and opening files to more advanced computing, you can power through your day thanks to faster SSDs and Turbo Boost processing up to 3.6GHz.",
+          "productAsset": {
+            "id": "70",
+            "preview": "derick-david-409858-unsplash__preview.jpg"
+          },
+          "variantFacets": [],
+          "options": [
+            {
+              "id": "5",
+              "name": "13 inch"
+            },
+            {
+              "id": "7",
+              "name": "8GB"
+            }
+          ]
+        },
+        {
+          "variantId": "2",
+          "sku": "L2201508",
+          "variantName": "Laptop 15 inch 8GB",
+          "price": 1399,
+          "priceWithTax": 1678.8,
+          "productId": "1",
+          "productName": "Laptop",
+          "slug": "laptop",
+          "description": "Now equipped with seventh-generation Intel Core processors, Laptop is snappier than ever. From daily tasks like launching apps and opening files to more advanced computing, you can power through your day thanks to faster SSDs and Turbo Boost processing up to 3.6GHz.",
+          "productAsset": {
+            "id": "70",
+            "preview": "derick-david-409858-unsplash__preview.jpg"
+          },
+          "variantFacets": [],
+          "options": [
+            {
+              "id": "6",
+              "name": "15 inch"
+            },
+            {
+              "id": "7",
+              "name": "8GB"
+            }
+          ]
+        },
+        {
+          "variantId": "3",
+          "sku": "L2201316",
+          "variantName": "Laptop 13 inch 16GB",
+          "price": 2199,
+          "priceWithTax": 2638.8,
+          "productId": "1",
+          "productName": "Laptop",
+          "slug": "laptop",
+          "description": "Now equipped with seventh-generation Intel Core processors, Laptop is snappier than ever. From daily tasks like launching apps and opening files to more advanced computing, you can power through your day thanks to faster SSDs and Turbo Boost processing up to 3.6GHz.",
+          "productAsset": {
+            "id": "70",
+            "preview": "derick-david-409858-unsplash__preview.jpg"
+          },
+          "variantFacets": [],
+          "options": [
+            {
+              "id": "5",
+              "name": "13 inch"
+            },
+            {
+              "id": "8",
+              "name": "16GB"
+            }
+          ]
+        },
+        {
+          "variantId": "4",
+          "sku": "L2201516",
+          "variantName": "Laptop 15 inch 16GB",
+          "price": 2299,
+          "priceWithTax": 2758.8,
+          "productId": "1",
+          "productName": "Laptop",
+          "slug": "laptop",
+          "description": "Now equipped with seventh-generation Intel Core processors, Laptop is snappier than ever. From daily tasks like launching apps and opening files to more advanced computing, you can power through your day thanks to faster SSDs and Turbo Boost processing up to 3.6GHz.",
+          "productAsset": {
+            "id": "70",
+            "preview": "derick-david-409858-unsplash__preview.jpg"
+          },
+          "variantFacets": [],
+          "options": [
+            {
+              "id": "6",
+              "name": "15 inch"
+            },
+            {
+              "id": "8",
+              "name": "16GB"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

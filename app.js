@@ -338,6 +338,43 @@ App({
     this.setCartItems([]);
   },
 
+  addItemToLocalCart(product, quantity = 1) {
+    return this.addToCart(product, quantity);
+  },
+
+  async addItemToServerCart(variantId, quantity = 1) {
+    const { graphqlClient } = require('./utils/api.js');
+    
+    const mutation = `
+      mutation AddItemToOrder($productVariantId: ID!, $quantity: Int!) {
+        addItemToOrder(productVariantId: $productVariantId, quantity: $quantity) {
+          ... on Order {
+            id
+            state
+            totalQuantity
+          }
+          ... on OrderLimitError {
+            message
+          }
+          ... on InsufficientStockError {
+            message
+          }
+        }
+      }
+    `;
+    
+    const result = await graphqlClient.mutate(mutation, {
+      productVariantId: variantId,
+      quantity: quantity,
+    });
+    
+    if (result.addItemToOrder.message) {
+      throw new Error(result.addItemToOrder.message);
+    }
+    
+    return result.addItemToOrder;
+  },
+
   getCartTotal() {
     const cartItems = this.getCartItems();
     return cartItems

@@ -234,7 +234,7 @@
 .back-to-top {
   aspect-ratio: 1 / 1;
   position: fixed;
-  bottom: 200rpx;
+  bottom: 60rpx;
   right: 30rpx;
   width: 90rpx;
   height: 90rpx;
