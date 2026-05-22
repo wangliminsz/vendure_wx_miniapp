@@ -273,6 +273,53 @@
   padding: 0;
 }
 
+/* 技术文档区域 */
+.docs-section {
+  margin-top: 32rpx;
+  padding: 24rpx;
+  background-color: #F7F8FA;
+  border-radius: 16rpx;
+}
+
+.docs-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1D2129;
+  margin-bottom: 20rpx;
+}
+
+.docs-list {
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  justify-content: start;
+  flex-wrap: wrap;
+}
+
+.file_icon-container {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.file_icon {
+  width: 40px;
+  height: 40px;
+}
+
+.doc-name {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: #1D2129;
+  text-align: center;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* 商品图片区：和信息区无缝衔接，完全融为一体 */
 .product-images {
   background-color: #ffffff;

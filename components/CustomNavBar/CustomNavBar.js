@@ -2,7 +2,7 @@ Component({
   properties: {
     title: {
       type: String,
-      default: '优材工品'
+      default: '优涂工品'
     }
   },
   data: {

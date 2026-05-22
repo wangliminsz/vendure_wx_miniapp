@@ -3,7 +3,7 @@
   <view wx:if="{{isLoading}}" class="loading-overlay">
     <view class="loading-content">
       <view class="loading-spinner"></view>
-      <text class="loading-text">加载中...</text>
+      <!-- <text class="loading-text">加载中...</text> -->
     </view>
   </view>
 

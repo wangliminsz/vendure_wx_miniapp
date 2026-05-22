@@ -133,10 +133,10 @@ Page({
   },
 
   onShareAppMessage: function () {
-    return { title: '优材工品', path: '/pages/mine/mine' };
+    return { title: '优涂工品', path: '/pages/mine/mine' };
   },
 
   onShareTimeline: function () {
-    return { title: '优材工品', path: '/pages/mine/mine' };
+    return { title: '优涂工品', path: '/pages/mine/mine' };
   }
 });

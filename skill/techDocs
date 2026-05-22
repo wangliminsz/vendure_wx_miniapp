@@ -1,0 +1,22 @@
+GraphQL API 查询
+
+设置了 public: true，在你的前端独立站（或者开发微信小程序商品详情页）时，可以直接在 GraphQL 查询中拿到这些 PDF 的访问链接：
+
+GraphQL
+
+query GetProductTechDocs($slug: String!) {
+  product(slug: $slug) {
+    id
+    name
+    customFields {
+      techDocs {
+        id
+        name
+        source # 原始文件根路径
+        preview # 预览图（PDF 通常会自动生成一张封面缩略图）
+      }
+    }
+  }
+}
+
+💡 小贴士：Vendure 默认的 AssetServerPlugin 会对图片进行裁剪优化，但对于 PDF 等文档，它会直接保留原样。前台拿到 source 链接后，直接用 <a href="source_url" target="_blank">下载文档</a> 就能供客户预览或下载了。

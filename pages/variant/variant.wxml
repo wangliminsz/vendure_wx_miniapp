@@ -11,56 +11,7 @@
   </view>
 
   <view wx:elif="{{variant}}" class="variant-content">
-    <!-- 商品信息区 -->
-    <view class="product-info">
-      <view class="product-header">
-        <text class="product-name">{{variant.name}}</text>
-        <text class="product-subtitle">{{product.name}}</text>
-      </view>
-
-      <view class="flex justify-between">
-        <view class="price-section">
-          <text class="product-price">¥{{variant.priceWithTax / 100}}</text>
-        </view>
-
-        <view class="meta-section">
-          <text wx:if="{{variant.sku}}" class="product-sku">{{variant.sku}}</text>
-          <text class="stock-status {{getStockLevelClass(variant.stockLevel)}}">
-            {{getStockLevelText(variant.stockLevel)}}
-          </text>
-        </view>
-      </view>
-
-      <view wx:if="{{product.description}}" class="product-description">
-        <text class="description-title">商品说明</text>
-        <rich-text nodes="{{product.description}}"></rich-text>
-      </view>
-
-      <view wx:if="{{addToCartError}}" class="error-tip">
-        <view class="error-tip-content">
-          <text class="error-tip-icon">!</text>
-          <text class="error-tip-text">{{addToCartError}}</text>
-        </view>
-        <view class="error-tip-close" bindtap="closeError">
-          <text>×</text>
-        </view>
-      </view>
-
-      <view class="quantity-section">
-        <text class="quantity-label">购买数量</text>
-        <view class="quantity-control">
-          <view class="quantity-btn minus" bindtap="onMinus">
-            <text>-</text>
-          </view>
-          <input type="number" class="quantity-input" value="{{quantity}}" bindchange="onQuantityChange" />
-          <view class="quantity-btn plus" bindtap="onPlus">
-            <text>+</text>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <!-- 商品图片区：和信息区无缝衔接 -->
+    <!-- 商品图片区：放在最上面！-->
     <view class="product-images">
       <view class="main-image-container">
         <image wx:if="{{images.length > 0}}" src="{{images[currentImageIndex].preview}}" mode="aspectFit" class="main-image" lazy-load />
@@ -89,12 +40,70 @@
       </view>
     </view>
 
+    <!-- 商品信息区：放在图片下面！-->
+    <view class="product-info">
+      <view class="product-header">
+        <text class="product-name">{{variant.name}}</text>
+        <text class="product-subtitle">{{product.name}}</text>
+      </view>
+
+      <view class="flex justify-between">
+        <view class="price-section">
+          <text class="product-price">¥{{variant.priceWithTax / 100}}</text>
+        </view>
+
+        <view class="meta-section">
+          <text wx:if="{{variant.sku}}" class="product-sku">{{variant.sku}}</text>
+          <text class="stock-status {{getStockLevelClass(variant.stockLevel)}}">
+            {{getStockLevelText(variant.stockLevel)}}
+          </text>
+        </view>
+      </view>
+
+      <view wx:if="{{product.description}}" class="product-description">
+        <text class="description-title">商品说明</text>
+        <rich-text nodes="{{product.description}}"></rich-text>
+      </view>
+
+      <view wx:if="{{techDocs.length > 0}}" class="docs-section">
+        <text class="docs-title">技术文档</text>
+        <view class="docs-list">
+          <view wx:for="{{techDocsWithIcons}}" wx:key="id" wx:for-index="index" class="file_icon-container" bindtap="downloadFile" data-url="{{item.preview}}" data-index="{{index}}">
+            <image src="{{item.icon}}" class="file_icon" mode="aspectFit"></image>
+            <text class="doc-name">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{addToCartError}}" class="error-tip">
+        <view class="error-tip-content">
+          <text class="error-tip-icon">!</text>
+          <text class="error-tip-text">{{addToCartError}}</text>
+        </view>
+        <view class="error-tip-close" bindtap="closeError">
+          <text>×</text>
+        </view>
+      </view>
+
+      <view class="quantity-section">
+        <text class="quantity-label">购买数量</text>
+        <view class="quantity-control">
+          <view class="quantity-btn minus" bindtap="onMinus">
+            <text>-</text>
+          </view>
+          <input type="number" class="quantity-input" value="{{quantity}}" bindchange="onQuantityChange" />
+          <view class="quantity-btn plus" bindtap="onPlus">
+            <text>+</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
     <!-- 底部固定操作栏 -->
     <view class="bottom-bar">
       <view class="action-icons">
         <view class="action-icon-item" bindtap="goHome">
           <image src="/static/tabbar/home-n.png" mode="aspectFit"></image>
-          <!-- <text>首页</text> -->
         </view>
         <view class="action-icon-item cart-icon" bindtap="goToCart">
           <image src="/static/tabbar/cart-n.png" mode="aspectFit"></image>

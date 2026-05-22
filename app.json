@@ -62,7 +62,7 @@
 
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "优材工品",
+    "navigationBarTitleText": "优涂工品",
     "navigationBarBackgroundColor": "#ffffff",
     "backgroundColor": "#F2F3F5",
     "enablePullDownRefresh": true,

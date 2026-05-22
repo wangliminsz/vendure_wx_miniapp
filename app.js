@@ -26,8 +26,16 @@ App({
     // 3. 异步初始化云开发环境（不阻塞主登录流程）
     this.initCloud();
 
-    // 4. 🔥 启动核心身份鉴权控制流，并挂载到全局 Promise
-    this.loginPromise = this.initAuthFlow();
+    // 4. 初始化购物车徽章（即使未登录也显示本地购物车数量）
+    this.initCartBadge();
+
+    // 5. 🔥 启动核心身份鉴权控制流，并挂载到全局 Promise
+    this.loginPromise = this.initAuthFlow().then(() => {
+      // 登录完成后同步服务器购物车数量
+      if (this.globalData.isLogin) {
+        this.syncServerCartCount();
+      }
+    });
   },
 
   /**
@@ -43,8 +51,7 @@ App({
       
       if (isValid) {
         console.log('【步骤 1-成功】Token 依然有效，老用户免密进入首页');
-        this.globalData.isLogin = true;
-        setTimeout(() => { this.syncServerCartCount(); }, 300);
+        this.setLoginStatus(true);
         return { isLogin: true, openid: wx.getStorageSync('openid') };
       }
       
@@ -68,12 +75,11 @@ App({
 
     if (isRegisteredUser) {
       console.log('【步骤 3-A】该用户已注册过，静默登录成功，Token 刷新。');
-      this.globalData.isLogin = true;
-      setTimeout(() => { this.syncServerCartCount(); }, 300);
+      this.setLoginStatus(true);
       return { isLogin: true, openid };
     } else {
       console.log('【步骤 3-B】该用户在系统中尚未创建账号 ➡️ 判定为【未注册新用户】');
-      this.globalData.isLogin = false;
+      this.setLoginStatus(false);
       return { isLogin: false, openid };
     }
   },
@@ -391,6 +397,20 @@ App({
     }, 0);
   },
 
+  initCartBadge() {
+    const localItems = wx.getStorageSync('cart_items') || [];
+    const localCount = localItems.reduce((count, item) => count + item.quantity, 0);
+    
+    console.log('initCartBadge - 本地购物车数量:', localCount);
+    
+    if (localCount > 0) {
+      wx.setTabBarBadge({
+        index: 3,
+        text: String(localCount),
+      });
+    }
+  },
+
   updateCartBadge() {
     const cartCount = this.globalData.cartTotalCount || this.getCartCount();
     console.log('updateCartBadge - cartCount:', cartCount);
@@ -426,6 +446,68 @@ App({
       }
     } catch (error) {
       console.error('同步服务器购物车数量失败:', error);
+    }
+  },
+
+  async mergeLocalCartToServer() {
+    if (!this.globalData.isLogin) {
+      console.log('mergeLocalCartToServer - 用户未登录，跳过合并');
+      return;
+    }
+
+    const localItems = wx.getStorageSync('cart_items') || [];
+    if (localItems.length === 0) {
+      console.log('mergeLocalCartToServer - 本地购物车为空，无需合并');
+      return;
+    }
+
+    console.log(`mergeLocalCartToServer - 开始合并 ${localItems.length} 个本地商品到服务器`);
+
+    try {
+      const { graphqlClient } = require('./utils/api.js');
+      
+      for (const item of localItems) {
+        const mutation = `
+          mutation AddItemToOrder($productVariantId: ID!, $quantity: Int!) {
+            addItemToOrder(productVariantId: $productVariantId, quantity: $quantity) {
+              __typename
+              ... on Order {
+                id
+              }
+              ... on ErrorResult {
+                errorCode
+                message
+              }
+            }
+          }
+        `;
+        await graphqlClient.mutate(mutation, {
+          productVariantId: item.variantId,
+          quantity: item.quantity,
+        });
+        console.log(`mergeLocalCartToServer - 已合并商品: ${item.variantId}`);
+      }
+
+      wx.removeStorageSync('cart_items');
+      this.globalData.cartItems = [];
+      
+      await this.syncServerCartCount();
+      console.log('mergeLocalCartToServer - 合并完成');
+    } catch (error) {
+      console.error('mergeLocalCartToServer - 合并失败:', error);
+    }
+  },
+
+  setLoginStatus(isLogin) {
+    const previousStatus = this.globalData.isLogin;
+    this.globalData.isLogin = isLogin;
+    
+    if (isLogin && !previousStatus) {
+      console.log('setLoginStatus - 登录状态从 false 变为 true，开始合并购物车');
+      setTimeout(() => { this.mergeLocalCartToServer(); }, 100);
+    } else if (!isLogin && previousStatus) {
+      console.log('setLoginStatus - 登录状态从 true 变为 false，显示本地购物车数量');
+      this.initCartBadge();
     }
   },
 });

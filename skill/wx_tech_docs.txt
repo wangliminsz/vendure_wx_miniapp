@@ -1,0 +1,15 @@
+ <view wx:if="{{property.w_docs.length > 0}}" class="myflex_row_02_1">
+ 
+  <view class="mylabel">楼盘资料：</view>
+
+  <view class="mycontent_1">
+    <view wx:for="{{w_docs_icon}}" wx:key="index">
+      <view class="file_icon-container" bindtap="downloadFile" data-url="{{item.url}}">
+        <view>
+          <image src="{{item.icon}}" class="file_icon"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+
+</view>

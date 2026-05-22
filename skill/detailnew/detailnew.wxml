@@ -1,0 +1,275 @@
+<!-- 主体部分 -->
+<view wx:if="{{!isLoading}}">
+
+  <scroll-view style="margin-top: 0px; flex: 1; overflow: auto; z-index: 99;">
+
+    <!-- ~~~~~~~~~ Title 等等 margin: 5px;-->
+    <view style="margin: 5px; border: 1px solid #808080; border-radius: 8px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);">
+
+      <view class="myflex_column_01">
+
+        <!-- 顶部，蓝色类型  -->
+        <view wx:if="{{property.w_type}}" class="myflex_row_01">
+          <view class="bg-blue-600 text-white px-2 py-1 text-90-percent rounded">{{property.w_type[1]}}</view>
+        </view>
+
+        <!-- Title -->
+        <view class="text-lg" style="margin-top: 10px; margin-bottom: 10px; color: black; ">
+          <text>{{property.w_title}}</text>
+        </view>
+
+        <!-- // type 出售 价格 状态-->
+        <view wx:if="{{property.w_type[0] < 12}}">
+
+          <view wx:if="{{property.w_price}}" class="bg-blue-50 p-4 rounded-lg" style="margin-top: 10px; margin-bottom: 10px;">
+
+            <view class="myflex_row_01">
+
+              <!-- // type 出售 价格 -->
+              <view class="myflex_row_02">
+                <view class="text-lg font-normal text-red-500">起售价格：{{property.w_price }} 泰铢/平米
+                </view>
+
+              </view>
+            </view>
+          </view>
+        </view>
+
+      </view>
+
+    </view>
+
+    <!-- ~~~~~~~~~ 首页图片-->
+    <view wx:if="{{property.w_thumbnail}}" style="margin-top: 20px; margin-left: 5px; margin-right: 5px; ">
+
+      <view>
+        <!-- w-img-container -->
+        <view class="relative">
+
+          <image class="w-img" mode="widthFix" bindload="onImageLoad" src="{{property.w_thumbnail}}" bindtap="previewMainImage" alt=""></image>
+
+          <view wx:if="{{(property.w_wxuserid_01 && property.w_wxfeedid_01)}}" bindtap="onWxTextTap" data-wxuserid="{{property.w_wxuserid_01}}" data-wxfeedid="{{property.w_wxfeedid_01}}" class="play-button" style="top: 50%; left: 50%;"></view>
+
+          <view wx:if="{{property.w_status}}" class="absolute top-2 left-2 bg-white-detail text-red-detail px-0 py-0 rounded opacity-70">{{property.w_status}} </view>
+
+        </view>
+      </view>
+
+      <!-- 視頻號 介绍 拉起 ~~~ -->
+      <view style="padding: 10px; margin-top: 5px; margin-bottom: 10px;" wx:if="{{(property.w_wxuserid_01 && property.w_wxfeedid_01) || (property.w_wxuserid_02 && property.w_wxfeedid_02)}}">
+
+        <view class="myflex_row_01">
+
+          <view wx:if="{{(property.w_wxuserid_01 && property.w_wxfeedid_01) }}" class="text-lg font-normal" bindtap="onWxTextTap" data-wxuserid="{{property.w_wxuserid_01}}" data-wxfeedid="{{property.w_wxfeedid_01}}">
+
+            <view style="padding-left: 15px; padding-right: 15px;padding-top: 6px; padding-bottom: 6px;" class="bg-white-detail text-gray-detail px-0 py-0 rounded opacity-70">视频介绍</view>
+
+          </view>
+
+          <view wx:if="{{(property.w_wxuserid_02 && property.w_wxfeedid_02) }}" class="text-lg font-normal" bindtap="onWxTextTap" data-wxuserid="{{property.w_wxuserid_02}}" data-wxfeedid="{{property.w_wxfeedid_02}}">
+
+            <view style="padding-left: 15px; padding-right: 15px;padding-top: 6px; padding-bottom: 6px;" class="bg-white-detail text-gray-detail px-0 py-0 rounded opacity-70">视频介绍</view>
+
+          </view>
+
+        </view>
+
+      </view>
+
+    </view>
+
+    <!-- ~~~~~~~~~ 楼盘信息-->
+    <view style="margin: 20px;"> 楼盘信息</view>
+
+    <view style="margin: 5px; border: 1px solid #808080; border-radius: 8px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);">
+
+      <!-- 项目代码 -->
+      <view wx:if="{{property.w_code}}" class="myflex_row_02_1">
+        <view class="mylabel">项目代码：</view>
+        <view wx:if="{{property.w_code}}" class="mycontent">{{property.w_code}}</view>
+      </view>
+
+      <!-- 项目名称 -->
+      <view wx:if="{{property.w_title}}" class="myflex_row_02_1">
+        <view class="mylabel">项目名称：</view>
+        <view wx:if="{{property.w_title}}" class="mycontent">{{property.w_title}}</view>
+      </view>
+
+      <!-- 项目描述 -->
+      <view wx:if="{{property.w_desc}}" class="myflex_row_02_1">
+        <view class="mylabel">项目描述：</view>
+        <view wx:if="{{property.w_desc}}" class="mycontent">{{property.w_desc}}</view>
+      </view>
+
+      <!-- 项目位置 -->
+      <view wx:if="{{property.w_address}}" class="myflex_row_02_1">
+        <view class="mylabel">项目位置：</view>
+        <view wx:if="{{property.w_address}}" class="mycontent">{{property.w_address}}</view>
+      </view>
+
+      <!-- 土地面积 -->
+      <view wx:if="{{property.w_land}}" class="myflex_row_02_1">
+        <view class="mylabel">土地面积：</view>
+        <view wx:if="{{property.w_land}}" class="mycontent">{{property.w_land}}</view>
+      </view>
+
+      <!-- 项目类型 -->
+      <view wx:if="{{property.w_project_type}}" class="myflex_row_02_1">
+        <view class="mylabel">项目类型：</view>
+        <view wx:if="{{property.w_project_type}}" class="mycontent">{{property.w_project_type}}</view>
+      </view>
+
+      <!-- 单位数量 -->
+      <view wx:if="{{property.w_project_unit}}" class="myflex_row_02_1">
+        <view class="mylabel">单位数量：</view>
+        <view wx:if="{{property.w_project_unit}}" class="mycontent">{{property.w_project_unit}}</view>
+      </view>
+
+      <!-- 停车位 -->
+      <view wx:if="{{property.w_project_parking}}" class="myflex_row_02_1">
+        <view class="mylabel">停 车 位：</view>
+        <view wx:if="{{property.w_project_parking}}" class="mycontent">{{property.w_project_parking}}</view>
+      </view>
+
+      <!-- 建成时间 -->
+      <view wx:if="{{property.w_year}}" class="myflex_row_02_1">
+        <view class="mylabel">建成时间：</view>
+        <view wx:if="{{property.w_year}}" class="mycontent">{{property.w_year}}</view>
+      </view>
+
+      <!-- 项目资料 -->
+      <!-- 文件 PDF my Files with icon ~~~ -->
+      <view wx:if="{{property.w_docs.length > 0}}" class="myflex_row_02_1">
+
+        <view class="mylabel">楼盘资料：</view>
+
+        <view class="mycontent_1">
+          <view wx:for="{{w_docs_icon}}" wx:key="index">
+            <view class="file_icon-container" bindtap="downloadFile" data-url="{{item.url}}">
+              <view>
+                <image src="{{item.icon}}" class="file_icon"></image>
+              </view>
+            </view>
+          </view>
+        </view>
+
+
+      </view>
+
+      <!-- 公众号文章 -->
+      <!-- style="margin: 10px;"  -->
+      <view wx:if="{{property.w_article_url}}" class="myflex_row_02_1">
+        <button style="font-weight: normal; font-size: 15px; padding: 6px 6px; line-height: 1.5; min-height: 0; width: auto; display: inline-block;" bindtap="showArticle" data-url="{{property.w_article_url}}">公众号文章
+        </button>
+      </view>
+
+      <!-- 公众号文章 -->
+
+    </view>
+
+    <!-- ~~~~~~~~~ 楼盘周边 -->
+    <view wx:if="{{property.w_uni.length > 0}}">
+      <view style="margin: 20px;"> 项目户型</view>
+
+      <view style="margin: 5px; border: 1px solid #808080; border-radius: 8px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);">
+        <view style="padding: 10px">
+          <view wx:for="{{property.w_uni}}" wx:key="index" style="width: 100%;">
+
+            <!-- Only render the outer view for even indexed items -->
+
+            <view class="myflex_row_01" style="margin-right: 10px;">
+              <view style="font-size: 14px; margin-bottom: 10px;">{{item.type}}</view>
+              <view style="color:#333; font-size: 13px; margin-top: 5px;">{{item.size}}</view>
+            </view>
+
+
+
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ~~~~~~~~~ 楼盘设施 -->
+    <view wx:if="{{property.w_fac.length > 0}}">
+      <view style="margin: 20px;"> 楼盘设施</view>
+
+      <view style="margin: 5px; border: 1px solid #808080; border-radius: 8px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);">
+        <view style="padding: 10px">
+          <view wx:for="{{property.w_fac}}" wx:key="index" style="width: 100%;">
+
+            <view class="myflex_row_01" style="margin-right: 10px;">
+              <view style="font-size: 14px; margin-bottom: 10px;">{{item}}</view>
+            </view>
+
+
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ~~~~~~~~~ 楼盘周边 -->
+    <view wx:if="{{property.w_sur.length > 0}}">
+      <view style="margin: 20px;"> 楼盘周边</view>
+
+      <view style="margin: 5px; border: 1px solid #808080; border-radius: 8px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);">
+        <view style="padding: 10px">
+          <view wx:for="{{property.w_sur}}" wx:key="index" style="width: 100%;">
+
+            <!-- Only render the outer view for even indexed items -->
+
+            <view class="myflex_row_01" style="margin-right: 10px;">
+              <view style="font-size: 14px; margin-bottom: 10px;">{{item.title}}</view>
+              <view style="color:#333; font-size: 13px; margin-top: 5px;">{{item.distance}}</view>
+            </view>
+
+
+
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ~~~~~~~~~ 楼盘图片-->
+    <view wx:if="{{property.w_pics.length > 0}}">
+      <view style="margin: 20px;"> 楼盘图片</view>
+
+      <view style="margin: 5px; border: 1px solid #808080; border-radius: 8px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);">
+        <view style="padding: 10px">
+          <view wx:for="{{property.w_pics}}" wx:key="index" style="width: 100%;">
+
+
+            <!-- property.w_pics[index] -->
+            <image style="width: 100%;" mode="widthFix" src="{{item}}" data-index="{{index}}" bindtap="previewImage" alt=""></image>
+
+            <!-- <image style="width: 100%;" mode="widthFix" src="{{item}}" data-index="{{index}}" bindtap="previewImage" alt=""> </image>-->
+
+
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ~~~~~~~~~ 楼盘描述 Description-->
+    <view wx:if="{{property.w_desc}}">
+      <view style="margin: 20px;">楼盘描述</view>
+
+      <view style="margin: 5px; border: 1px solid #808080; border-radius: 8px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);">
+
+        <view style="margin: 15px; padding-right: 12px; width: 90%;">
+          <!-- {{property.w_desc}} -->
+          <rich-text nodes="{{property.w_desc}}"></rich-text>
+        </view>
+
+      </view>
+    </view>
+
+  </scroll-view>
+
+</view>
+
+
+<!-- 回到顶部 -->
+<view wx:if="{{showBackToTop}}" class="back-to-top" bindtap="scrollToTop">
+  <!-- <icon type="download" size="30" class="back-to-top-icon" /> -->
+  <image src="/static/images/up-arrow.svg" class="back-to-top"></image>
+</view>

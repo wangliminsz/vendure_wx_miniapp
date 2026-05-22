@@ -1,7 +1,7 @@
 {
   "name": "youcai-miniapp",
   "version": "1.0.0",
-  "description": "优材工品小程序商城 - 工业耗材B2B批量采购平台",
+  "description": "优涂工品小程序商城 - 工业耗材B2B批量采购平台",
   "main": "app.js",
   "scripts": {
     "dev": "echo '微信开发者工具中打开项目'",
@@ -13,7 +13,7 @@
     "B2B电商",
     "Vendure"
   ],
-  "author": "优材工品",
+  "author": "优涂工品",
   "license": "MIT",
   "dependencies": {
     "@vant/weapp": "^1.11.7"

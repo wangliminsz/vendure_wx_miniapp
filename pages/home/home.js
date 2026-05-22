@@ -7,7 +7,7 @@ Page({
     banners: [
       {
         image: 'https://bkkschool-1304214433.cos.ap-guangzhou.myqcloud.com/1761471765660-618-15.jpg',
-        title: '优材工品',
+        title: '优涂工品',
         subtitle: '工业耗材B2B批量采购平台',
       },
       {

@@ -16,6 +16,8 @@ Page({
     isAddingToCart: false,
     isLogin: false,
     cartCount: 0,
+    techDocs: [],
+    techDocsWithIcons: [],
   },
 
   onLoad(options) {
@@ -53,13 +55,22 @@ Page({
     try {
       this.setData({ loading: true, error: null });
 
-      const query = `
+      // First, try to get all product data including techDocs
+      const fullQuery = `
         query GetProductWithVariants($slug: String!) {
           product(slug: $slug) {
             id
             name
             slug
             description
+            customFields {
+              techDocs {
+                id
+                name
+                source
+                preview
+              }
+            }
             collections {
               id
               slug
@@ -98,9 +109,60 @@ Page({
         }
       `;
 
-      const data = await graphqlClient.query(query, { slug: this.data.productSlug });
-      
-      console.log('fetchVariant data:', data);
+      let data;
+      try {
+        data = await graphqlClient.query(fullQuery, { slug: this.data.productSlug });
+        console.log('fetchVariant full data:', data);
+      } catch (err) {
+        console.warn('Failed to get full product (maybe techDocs not available), falling back to basic query:', err);
+        // Fallback to basic query without techDocs
+        const basicQuery = `
+          query GetProductWithVariants($slug: String!) {
+            product(slug: $slug) {
+              id
+              name
+              slug
+              description
+              collections {
+                id
+                slug
+                name
+              }
+              featuredAsset {
+                id
+                preview
+              }
+              assets {
+                id
+                preview
+              }
+              variants {
+                id
+                name
+                sku
+                priceWithTax
+                currencyCode
+                stockLevel
+                featuredAsset {
+                  id
+                  preview
+                }
+                assets {
+                  id
+                  preview
+                }
+                options {
+                  id
+                  name
+                  code
+                }
+              }
+            }
+          }
+        `;
+        data = await graphqlClient.query(basicQuery, { slug: this.data.productSlug });
+        console.log('fetchVariant basic data:', data);
+      }
 
       const product = data?.product;
 
@@ -186,10 +248,19 @@ Page({
   setVariantData(variant, product, images) {
     const variantData = { ...variant, product };
 
+    // Check both possible locations for techDocs
+    const techDocs = product.customFields?.techDocs || product.techDocs || [];
+    const techDocsWithIcons = techDocs.map(doc => ({
+      ...doc,
+      icon: this.getIcon(doc.name || doc.preview || '')
+    }));
+
     this.setData({
       variant: variantData,
       product: product,
       images: images,
+      techDocs: techDocs,
+      techDocsWithIcons: techDocsWithIcons,
       loading: false,
       quantity: 1,
     });
@@ -446,5 +517,90 @@ Page({
 
   onShow() {
     this.updateCartCount();
+  },
+
+  downloadFile: function (e) {
+    const item = this.data.techDocs[e.currentTarget.dataset.index];
+    let fileUrl = item.source || e.currentTarget.dataset.url;
+    // Clean up URL (remove any backticks, quotes, and extra spaces
+    fileUrl = fileUrl.replace(/[`"' ]/g, '');
+
+    const fileName = item.name || '';
+    const extension = fileName.split('.').pop().toLowerCase();
+    
+    // If it's an image file, use wx.previewImage
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+      wx.previewImage({
+        current: fileUrl,
+        urls: [fileUrl]
+      });
+      return;
+    }
+    
+    // Otherwise, download and open as document
+    wx.downloadFile({
+      url: fileUrl,
+      success: function (res) {
+        const tempFilePath = res.tempFilePath;
+        console.log('下载成功，临时文件路径:', tempFilePath);
+        
+        wx.showToast({
+          title: '下载成功！',
+          icon: 'success'
+        });
+
+        wx.openDocument({
+          filePath: tempFilePath,
+          showMenu: true,
+          success: function () {
+            console.log('文档打开成功');
+          },
+          fail: function (err) {
+            console.error('文档打开失败:', err);
+            wx.showToast({
+              title: '文档打开失败！',
+              icon: 'none'
+            });
+          }
+        });
+      },
+      fail: function (err) {
+        console.error('下载失败:', err);
+        wx.showToast({
+          title: '下载失败！',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  getIcon: function (url) {
+    const extension = url.split('.').pop().toLowerCase();
+    switch (extension) {
+      case 'xlsx':
+      case 'xls':
+        return '/static/images/file_icons/EXCEL.svg';
+      case 'pdf':
+        return '/static/images/file_icons/PDF.svg';
+      case 'jpg':
+      case 'jpeg':
+        return '/static/images/file_icons/JPEG.svg';
+      case 'png':
+        return '/static/images/file_icons/PNG.svg';
+      case 'mp4':
+        return '/static/images/file_icons/MP4.svg';
+      case 'pptx':
+      case 'ppt':
+        return '/static/images/file_icons/PPTX.svg';
+      case 'txt':
+        return '/static/images/file_icons/TXT.svg';
+      case 'docx':
+      case 'doc':
+        return '/static/images/file_icons/WORD.svg';
+      case 'zip':
+        return '/static/images/file_icons/ZIP.svg';
+      default:
+        return '/static/images/file_icons/HTML.svg';
+    }
   },
 });

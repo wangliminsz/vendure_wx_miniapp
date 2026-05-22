@@ -149,7 +149,7 @@ Page({
             const token = res.header['vendure-auth-token'] || res.header['Vendure-Auth-Token'];
             if (token) {
               wx.setStorageSync('vendure-auth-token', token);
-              app.globalData.isLogin = true; 
+              app.setLoginStatus(true);
               resolve({ success: true });
             } else {
               resolve({ success: false, message: '未获取到系统安全令牌' });
