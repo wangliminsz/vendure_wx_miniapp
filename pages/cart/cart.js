@@ -16,12 +16,14 @@ Page({
   },
 
   async onShow() {
+    await app.initPromise;
     await app.loginPromise;
     this.loadCart();
   },
 
   async initCart() {
 
+    await app.initPromise;
     await app.loginPromise;
 
     this.setData({ 
@@ -186,7 +188,7 @@ Page({
       totalCount: totalCount,
     });
 
-    app.globalData.cartTotalCount = totalCount;
+    app.globalData.cartTotalCount = cartItems.length; // Set cart badge to number of distinct items
     this.updateCartBadge();
   },
 

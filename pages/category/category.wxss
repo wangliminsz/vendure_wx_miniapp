@@ -175,7 +175,7 @@
 }
 
 .product-price {
-  font-size: 28rpx;
+  font-size: 32rpx;
   color: #165DFF;
   /* font-weight: bold; */
 }

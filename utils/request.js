@@ -1,4 +1,5 @@
 const config = require('../config.js');
+const app = getApp();
 
 class Request {
   constructor() {
@@ -15,6 +16,11 @@ class Request {
     const storedToken = token || wx.getStorageSync('vendure-auth-token');
     if (storedToken) {
       headers['Authorization'] = `Bearer ${storedToken}`;
+    }
+
+    const channelToken = app.globalData.activeChannelToken;
+    if (channelToken) {
+      headers['vendure-token'] = channelToken;
     }
 
     return headers;

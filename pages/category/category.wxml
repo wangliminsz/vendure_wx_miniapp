@@ -37,7 +37,7 @@
             <!-- <text class="product-sku">料号: {{item.sku}}</text> -->
             <view class="product-footer">
               <view class="product-prices">
-                <text class="product-price">{{item.price}}</text>
+                <text class="product-price">¥ {{item.price}}</text>
                 <!-- <text class="product-volume-price" wx:if="{{item.volumePrice}}">批量: ¥{{item.volumePrice}}</text> -->
               </view>
               <!-- <text class="product-stock">库存: {{item.stock}}</text> -->

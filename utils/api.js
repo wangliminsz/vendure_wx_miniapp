@@ -1,9 +1,9 @@
 const config = require('../config.js');
+const app = getApp();
 
 class GraphQLClient {
   constructor() {
     this.apiUrl = config.development.API_URL;
-    this.channelToken = config.CHANNEL_TOKEN;
     this.authToken = '';
   }
 
@@ -17,8 +17,11 @@ class GraphQLClient {
       headers['Authorization'] = `Bearer ${authToken}`;
     }
 
-    if (this.channelToken) {
-      headers['vendure-token'] = this.channelToken;
+    const channelToken = app.globalData.activeChannelToken;
+    if (channelToken) {
+      console.log ('--------------vendure-token in homepage=', channelToken )
+      console.log ('--------------vendure-token in homepage=', channelToken)
+      headers['vendure-token'] = channelToken;
     }
 
     return headers;
@@ -26,7 +29,7 @@ class GraphQLClient {
 
   async request(query, variables = {}, token = '') {
     let queryString = query;
-    if (typeof query === 'object' && query.loc && query.loc.source && query.loc.source.body) {
+    if (typeof query === 'object' && query.loc && query.loc.source.body) {
       queryString = query.loc.source.body;
     } else if (typeof query !== 'string') {
       queryString = String(query);

@@ -114,6 +114,12 @@ Page({
       wx.request({
         url: app.globalData.baseUrl,
         method: 'POST',
+        header: {
+          'Content-Type': 'application/json',
+          // 👇 核心修复：带上当前活跃渠道的 Token！
+          // 这样 Vendure 后台创建出来的用户就会直接归属于该子渠道，实现隔离！
+          'vendure-token': app.globalData.activeChannelToken || '' 
+        },
         data: {
           query: `
             mutation DoRegister($openId: String!, $nickname: String, $lastName: String, $phone: String) {
@@ -173,7 +179,8 @@ Page({
         url: app.globalData.baseUrl,
         method: 'POST',
         header: {
-          'Authorization': `Bearer ${token}` 
+          'Authorization': `Bearer ${token}`,
+          'vendure-token': app.globalData.activeChannelToken || ''
         },
         data: {
           query: `

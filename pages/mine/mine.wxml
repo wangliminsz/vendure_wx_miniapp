@@ -2,7 +2,7 @@
   <!-- 加载状态 -->
   <view wx:if="{{isLoading}}" class="loading-overlay">
     <view class="loading-content">
-      <view class="loading-spinner"></view>
+      <!-- <view class="loading-spinner"></view> -->
       <!-- <text class="loading-text">加载中...</text> -->
     </view>
   </view>
@@ -19,15 +19,25 @@
         <view class="flex justify-between">
 
           <view>
-            <view class="user-nickname" wx:if="{{userNickName}}">{{userNickName}}</view>
+            <view class="user-nickname" wx:if="{{userNickName}}">
+              <view>
+                {{userNickName}}
+              </view>
+            </view>
             <view class="user-nickname placeholder" bindtap="updateUserInfo2" wx:else>点击注册</view>
+
             <view class="user-name" wx:if="{{userName}}">姓名：{{userName}}</view>
             <view class="user-phone" wx:if="{{userMobile}}">手机号：{{userMobile}}</view>
           </view>
 
-          <!-- 登录状态显示：已登录 -->
-          <view wx:if="{{isLogin}}" style="color:#0e8146; font-size:14px; margin-bottom:5px;">✅ 已登录</view>
-        
+          <!-- Vendure用户注册状态 -->
+          <view wx:if="{{userNickName}}">
+            <view class="vendure-status {{isLogin ? 'registered' : 'unregistered'}}">
+              <text wx:if="{{isLogin}}">✅ 已登录</text>
+              <text wx:else bindtap="updateUserInfo2">点击注册</text>
+            </view>
+          </view>
+
         </view>
 
 

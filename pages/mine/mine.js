@@ -25,6 +25,7 @@ Page({
   async onLoad() {
     wx.showLoading({ title: '加载中...', mask: true });
 
+    await app.initPromise;
     await app.loginPromise;
 
     const openid = app.globalData.openid || wx.getStorageSync('openid');
@@ -42,6 +43,10 @@ Page({
     
     if (!this.data.userAvatarUrl) {
       this.setData({ userAvatarUrl: config.avatarImg });
+    }
+
+    if (app.globalData.isLogin) {
+      await this.fetchVendureCustomerInfo();
     }
     
     this.setData({ isLoading: false });
@@ -123,6 +128,39 @@ Page({
     } catch (err) {
       console.error('读取微信云数据库故障:', err);
       return null;
+    }
+  },
+
+  async fetchVendureCustomerInfo() {
+    const { graphqlClient } = require('../../utils/api.js');
+    
+    try {
+      const query = `
+        query GetMe {
+          me {
+            id
+            identifier
+          }
+        }
+      `;
+      
+      const data = await graphqlClient.query(query);
+      console.log('fetchVendureCustomerInfo - data:', data);
+      
+      if (data?.me) {
+        const customer = data.me;
+        app.globalData.customerInfo = customer;
+        
+        // if (customer.lastName) {
+        //   this.setData({ userName: customer.lastName });
+        // }
+        
+        // if (customer.phoneNumber) {
+        //   this.setData({ userMobile: customer.phoneNumber });
+        // }
+      }
+    } catch (error) {
+      console.error('获取Vendure用户信息失败:', error);
     }
   },
 

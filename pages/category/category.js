@@ -17,7 +17,9 @@ Page({
     scrollTop: 0,
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 等待应用全局初始化完成 (确保渠道 token 已获取)
+    await app.initPromise;
     this.loadCategories();
     if (options.id) {
       const index = this.data.categories.findIndex(c => c.id == options.id);
@@ -252,6 +254,10 @@ Page({
         url: `/pages/product/product?id=${productId}`,
       });
     }
+  },
+
+  updateCartBadge() {
+    app.updateCartBadge();
   },
 
   onAddToCart(e) {

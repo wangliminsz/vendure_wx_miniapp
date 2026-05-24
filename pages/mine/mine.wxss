@@ -113,6 +113,24 @@
   line-height: 1.4;
 }
 
+/* Vendure注册状态 */
+.vendure-status {
+  font-size: 30rpx;
+  /* padding: 8rpx 16rpx; */
+  border-radius: 8rpx;
+  text-align: center;
+}
+
+.vendure-status.registered {
+  color: #00B42A;
+  /* background-color: #e8f5e9; */
+}
+
+.vendure-status.unregistered {
+  color: #FF7D00;
+  /* background-color: #ffebee; */
+}
+
 /* 按钮组：居中布局 + 超宽按钮 + 大间距 */
 .btn-group {
   width: 100%;

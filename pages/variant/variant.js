@@ -11,7 +11,7 @@ Page({
     error: null,
     currentImageIndex: 0,
     images: [],
-    quantity: 1,
+    quantity: 100,
     addToCartError: null,
     isAddingToCart: false,
     isLogin: false,
@@ -22,6 +22,10 @@ Page({
 
   onLoad(options) {
     console.log('variant onLoad options:', options);
+
+    this.setData({ quantity: 100 }, ()=>{
+      console.log('quantity------------------------------>', this.data.quantity)
+    })
     
     this.setData({
       productSlug: options.productSlug || '',
@@ -262,7 +266,7 @@ Page({
       techDocs: techDocs,
       techDocsWithIcons: techDocsWithIcons,
       loading: false,
-      quantity: 1,
+      quantity: 100,
     });
 
     wx.setNavigationBarTitle({
@@ -516,6 +520,10 @@ Page({
   },
 
   onShow() {
+    app.updateCartBadge();
+    if (app.globalData.isLogin) {
+      app.syncServerCartCount();
+    }
     this.updateCartCount();
   },
 

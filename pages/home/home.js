@@ -27,7 +27,9 @@ Page({
     collectionsLoading: true,
   },
 
-  onLoad() {
+  async onLoad() {
+    // 等待应用全局初始化完成 (确保渠道 token 已获取)
+    await app.initPromise;
     this.loadCollections();
   },
 

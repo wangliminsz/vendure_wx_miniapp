@@ -203,7 +203,10 @@ async function getCollection(slug, page = 1, pageSize = 20) {
     console.log('Fetching collection with slug:', slug);
     const options = {
       skip: (page - 1) * pageSize,
-      take: pageSize
+      take: pageSize,
+      sort: {
+        id: 'ASC',
+      },
     };
     const data = await graphqlClient.query(GET_COLLECTION, { slug, options });
     console.log('Collection data:', data);
