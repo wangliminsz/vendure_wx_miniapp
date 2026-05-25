@@ -1,0 +1,216 @@
+/* ======================================
+   🔥 全局通用样式库 - 优涂工品官方规范
+   所有页面直接使用，无需重复编写
+   ====================================== */
+
+/* ---------------- 全局基础 ---------------- */
+page {
+  background: #F7F8FA;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.container {
+  padding: 0 32rpx;
+  padding-bottom: 40rpx;
+}
+
+/* ---------------- 卡片通用 ---------------- */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  border: 1rpx solid #F2F3F5;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* ---------------- 页面标题 ---------------- */
+.page-header {
+  display: flex;
+  flex-direction: column;
+  padding: 32rpx 0;
+  margin-bottom: 24rpx;
+}
+
+.page-title {
+  font-size: 36rpx !important;
+  font-weight: bold;
+  color: #1D2129;
+  margin-bottom: 12rpx;
+}
+
+.page-desc {
+  font-size: 28rpx !important;
+  color: #86909C;
+}
+
+/* ---------------- 加载状态 ---------------- */
+.loading-state {
+  text-align: center;
+  padding: 100rpx 0;
+  font-size: 28rpx !important;
+  color: #86909C;
+}
+
+/* ---------------- 表单通用 ---------------- */
+.form-item {
+  margin-bottom: 32rpx;
+}
+
+.form-label {
+  font-size: 28rpx !important;
+  font-weight: 500;
+  color: #1D2129;
+  margin-bottom: 12rpx;
+  display: block;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1rpx solid #E5E6EB;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  font-size: 28rpx !important;
+  background: #fff;
+  color: #1D2129;
+}
+
+.form-textarea {
+  min-height: 200rpx;
+  line-height: 1.5;
+}
+
+/* ---------------- 复选框 ---------------- */
+.checkbox-group {
+  margin: 32rpx 0;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.checkbox-label {
+  font-size: 28rpx !important;
+  color: #333;
+}
+
+/* ---------------- 按钮系统（核心！） ---------------- */
+.btn,
+.btn-primary,
+.btn-default,
+.btn-danger {
+  height: 88rpx !important;
+  line-height: 88rpx !important;
+  border-radius: 16rpx;
+  font-size: 32rpx !important;
+  font-weight: 600;
+  text-align: center;
+  border: none;
+  box-sizing: border-box;
+}
+
+/* 主按钮（蓝色） */
+.btn-primary {
+  background: #165DFF;
+  color: #fff;
+  box-shadow: 0 2rpx 8rpx rgba(22, 93, 255, 0.15);
+}
+
+/* 次要按钮（白色） */
+.btn-default {
+  background: #fff;
+  color: #4E5969;
+  border: 1rpx solid #E5E6EB;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 危险按钮（删除/红色） */
+.btn-danger {
+  background: #FF4D4F;
+  color: #fff;
+}
+
+/* 按钮组（并排两个按钮） */
+.form-buttons {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 32rpx;
+}
+.form-buttons .btn {
+  flex: 1;
+}
+
+/* 清除按钮默认边框 */
+.btn::after,
+.btn-primary::after,
+.btn-default::after,
+.btn-danger::after {
+  border: none !important;
+}
+
+/* ---------------- 空状态 ---------------- */
+.empty-state {
+  padding: 100rpx 24rpx;
+  text-align: center;
+}
+.empty-text {
+  font-size: 32rpx !important;
+  font-weight: 500;
+  color: #4E5969;
+  margin-bottom: 12rpx;
+}
+.empty-hint {
+  font-size: 28rpx !important;
+  color: #86909C;
+}
+
+/* ---------------- 标签状态 ---------------- */
+.tag {
+  font-size: 24rpx !important;
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  font-weight: 500;
+}
+.tag-green {
+  background: #E6FFEF;
+  color: #00B42A;
+}
+.tag-blue {
+  background: #E5F0FF;
+  color: #165DFF;
+}
+
+/* ---------------- 弹窗 ---------------- */
+.modal-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.modal-content {
+  width: 600rpx;
+  padding: 48rpx 32rpx;
+  border-radius: 16rpx;
+  background: #fff;
+  text-align: center;
+}
+.modal-title {
+  font-size: 32rpx !important;
+  font-weight: bold;
+  color: #1D2129;
+  margin-bottom: 24rpx;
+}
+.modal-desc {
+  font-size: 28rpx !important;
+  color: #666;
+  margin-bottom: 40rpx;
+}

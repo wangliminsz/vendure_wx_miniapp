@@ -1,39 +1,152 @@
 <view class="container">
-  <!-- 地址列表 -->
-  <view class="address-list">
-    <view class="address-item {{item.isDefault ? 'default' : ''}}" wx:for="{{addresses}}" wx:key="id">
-      <view class="address-content" bindtap="onSelectAddress" data-id="{{item.id}}">
-        <view class="address-header">
-          <text class="receiver">{{item.receiver}}</text>
-          <text class="phone">{{item.phone}}</text>
-          <text class="default-tag" wx:if="{{item.isDefault}}">默认</text>
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="page-header-left">
+      <text class="page-title">地址管理</text>
+      <text class="page-desc">管理您的收货地址</text>
+    </view>
+    <view class="search-box">
+      <view class="search-input-wrapper">
+        <input class="search-input" placeholder="搜索姓名/地址" value="{{searchKeyword}}" bindinput="onSearchInput" bindconfirm="onSearch" />
+        <view class="clear-icon-wrapper" wx:if="{{searchKeyword}}" bindtap="onClearSearch">
+          <text class="clear-icon">×</text>
         </view>
-        <text class="address-detail">{{item.province}} {{item.city}} {{item.district}} {{item.detail}}</text>
       </view>
-      <view class="address-actions">
-        <view class="action-item" bindtap="onEditAddress" data-id="{{item.id}}">
-          <image src="/static/icons/edit.png" mode="aspectFit"></image>
-          <text>编辑</text>
-        </view>
-        <view class="action-item" bindtap="onDeleteAddress" data-id="{{item.id}}">
-          <image src="/static/icons/delete.png" mode="aspectFit"></image>
-          <text>删除</text>
-        </view>
+      <view class="search-icon-wrapper" bindtap="onSearch">
+        <image class="search-icon" src="/static/icons/search-360.png" mode="aspectFit" />
       </view>
     </view>
   </view>
 
-  <!-- 空状态 -->
-  <view class="empty-state" wx:if="{{addresses.length === 0}}">
-    <image src="/static/images/empty-address.png" mode="aspectFit"></image>
-    <text>暂无收货地址</text>
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{isLoading}}">
+    <text>加载中...</text>
   </view>
 
-  <!-- 添加地址按钮 -->
-  <view class="bottom-bar">
-    <button class="add-address-btn" bindtap="onAddAddress">
-      <image src="/static/icons/add.png" mode="aspectFit"></image>
-      <text>添加新地址</text>
-    </button>
+  <!-- 添加/编辑地址表单 -->
+  <view class="address-form" wx:if="{{isAddingAddress}}">
+    <view class="form-header">
+      <text class="form-back-btn" bindtap="goBack">← 返回</text>
+      <text class="form-title">{{editingAddress ? '编辑地址' : '新增地址'}}</text>
+    </view>
+
+    <view class="form-content">
+      <!-- 收货人 -->
+      <view class="form-item">
+        <text class="form-label">收货人</text>
+        <input class="form-input" placeholder="请输入收货人姓名" value="{{formData.fullName}}" data-field="fullName" bindinput="onFormInput" />
+      </view>
+
+      <!-- 手机号 -->
+      <view class="form-item">
+        <text class="form-label">手机号</text>
+        <input class="form-input" type="number" placeholder="请输入手机号码" value="{{formData.phoneNumber}}" data-field="phoneNumber" bindinput="onFormInput" />
+      </view>
+
+      <!-- 收货地址 -->
+      <view class="form-item">
+        <text class="form-label">详细地址</text>
+        <textarea class="form-textarea" placeholder="请输入详细收货地址" value="{{formData.address}}" data-field="address" bindinput="onFormInput" />
+      </view>
+
+      <!-- 默认地址选项 -->
+      <view class="checkbox-group">
+        <checkbox-group bindchange="onCheckboxChange" data-field="defaultShipping">
+          <label class="checkbox-item">
+            <checkbox value="defaultShipping" checked="{{formData.defaultShipping}}" />
+            <text class="checkbox-label">设为默认收货地址</text>
+          </label>
+        </checkbox-group>
+
+        <checkbox-group bindchange="onCheckboxChange" data-field="defaultBilling">
+          <label class="checkbox-item">
+            <checkbox value="defaultBilling" checked="{{formData.defaultBilling}}" />
+            <text class="checkbox-label">设为默认账单地址</text>
+          </label>
+        </checkbox-group>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="form-buttons">
+        <button class="btn-save" bindtap="saveAddress">保存</button>
+        <button class="btn-cancel" bindtap="cancelEdit">取消</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 地址列表 -->
+  <view class="address-list" wx:else>
+    <!-- 排序选项 -->
+    <view class="sort-section" wx:if="{{addresses.length > 1}}">
+      <view class="sort-label">排序方式</view>
+      <view class="sort-options">
+        <view class="sort-option {{sortField === 'name' ? 'active' : ''}}" bindtap="setSortField" data-field="name">
+          按姓名
+          <image wx:if="{{sortField === 'name'}}" class="sort-icon" src="/static/icons/sort-{{sortOrder === 'asc' ? 'asc' : 'desc'}}.png" />
+        </view>
+        <view class="sort-option {{sortField === 'address' ? 'active' : ''}}" bindtap="setSortField" data-field="address">
+          按地址
+          <image wx:if="{{sortField === 'address'}}" class="sort-icon" src="/static/icons/sort-{{sortOrder === 'asc' ? 'asc' : 'desc'}}.png" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 搜索结果空状态 -->
+    <view class="empty-state" wx:if="{{hasSearched && searchKeyword && filteredAddresses.length === 0}}">
+      <text class="empty-text">未找到匹配的地址</text>
+      <text class="empty-hint">请尝试其他关键词</text>
+    </view>
+
+    <!-- 正常空状态 -->
+    <view class="empty-state" wx:elif="{{!hasSearched && addresses.length === 0}}">
+      <text class="empty-text">暂无收货地址</text>
+      <text class="empty-hint">点击下方按钮添加新地址</text>
+    </view>
+
+    <!-- 地址卡片列表 -->
+    <view class="address-cards" wx:else>
+      <view class="address-card" wx:for="{{hasSearched && searchKeyword ? filteredAddresses : addresses}}" wx:key="id">
+        <view class="address-info">
+          <view class="address-header">
+            <text class="address-name">{{item.fullName}}</text>
+            <text class="address-phone">{{item.phoneNumber}}</text>
+          </view>
+          <text class="address-detail">{{item.streetLine1}}</text>
+          <view class="address-badges">
+            <text class="badge default-shipping" wx:if="{{item.defaultShippingAddress}}">默认收货</text>
+            <text class="badge default-billing" wx:if="{{item.defaultBillingAddress}}">默认账单</text>
+          </view>
+        </view>
+
+        <view class="address-actions">
+          <text class="action-btn edit" bindtap="startEditAddress" data-address="{{item}}">编辑</text>
+          <!-- <text class="action-btn delete" wx:if="{{(hasSearched && searchKeyword ? filteredAddresses : addresses).length > 1}}" bindtap="showDeleteConfirm" data-id="{{item.id}}">删除</text> -->
+
+          <text class="action-btn delete" wx:if="{{ (hasSearched && searchKeyword && filteredAddresses.length > 1) || (addresses.length > 1) }}" bindtap="showDeleteConfirm" data-id="{{item.id}}">删除</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 添加地址按钮 -->
+    <view class="add-address-btn-wrapper">
+      <button class="add-address-btn" bindtap="startAddAddress">添加新地址</button>
+    </view>
+
+    <!-- 返回按钮 -->
+    <view class="back-btn-wrapper">
+      <button class="back-btn" bindtap="goBack">返回</button>
+    </view>
+  </view>
+
+  <!-- 删除确认弹窗 -->
+  <view class="modal-mask" wx:if="{{showDeleteModal}}" bindtap="hideDeleteModal">
+    <view class="modal-content" catchtap="">
+      <text class="modal-title">确认删除</text>
+      <text class="modal-message">确定要删除这个地址吗？</text>
+      <view class="modal-buttons">
+        <button class="modal-btn cancel" bindtap="hideDeleteModal">取消</button>
+        <button class="modal-btn confirm" bindtap="confirmDelete">删除</button>
+      </view>
+    </view>
   </view>
 </view>

@@ -43,17 +43,19 @@ class Auth {
     } else {
       wx.showModal({
         title: '提示',
-        content: '请先登录',
+        content: '请先注册/登录',
         success(res) {
           if (res.confirm) {
-            wx.navigateTo({
-              url: '/pages/login/login',
+            // ✅ 跳 tabBar 页面必须用 switchTab
+            wx.switchTab({
+              url: '/pages/mine/mine',
             });
           }
         },
       });
     }
   }
+
 }
 
 const auth = new Auth();

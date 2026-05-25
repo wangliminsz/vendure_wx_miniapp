@@ -50,7 +50,7 @@ Page({
       }
       
       const parentCollections = collections.filter(c => !c.parent || c.parent.id === '1' || c.parent.name === '__root_collection__');
-      console.log('Parent collections:', JSON.stringify(parentCollections, null, 2));
+      // console.log('Parent collections:', JSON.stringify(parentCollections, null, 2));
       
       const sortedCategories = [];
       parentCollections.forEach(parent => {
@@ -71,7 +71,7 @@ Page({
         }
       });
 
-      console.log('Sorted categories:', JSON.stringify(sortedCategories, null, 2));
+      // console.log('Sorted categories:', JSON.stringify(sortedCategories, null, 2));
       
       this.setData({
         categories: sortedCategories,

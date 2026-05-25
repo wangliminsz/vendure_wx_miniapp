@@ -351,10 +351,11 @@ Page({
     if (!app.globalData.isLogin) {
       wx.showModal({
         title: '提示',
-        content: '请先登录',
+        content: '请先注册/登录',
         success: (res) => {
           if (res.confirm) {
-            wx.navigateTo({
+            // ✅ 跳 tabBar 页面必须用 switchTab
+            wx.switchTab({
               url: '/pages/mine/mine',
             });
           }

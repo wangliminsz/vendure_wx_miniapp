@@ -22,6 +22,12 @@ Page({
     });
   },
 
+  goToAddress: function () {
+    wx.navigateTo({
+      url: '/pages/address/address'
+    });
+  },
+
   async onLoad() {
     wx.showLoading({ title: '加载中...', mask: true });
 

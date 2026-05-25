@@ -86,7 +86,7 @@ App({
   async getChannelToken(code) {
     return new Promise((resolve) => {
       wx.request({
-        url: "http://192.168.0.51:3000/shop-api",
+        url: `${config.production.API_URL}`,
         method: "POST",
         header: {
           "Content-Type": "application/json",
