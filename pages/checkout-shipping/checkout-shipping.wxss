@@ -1,0 +1,403 @@
+/* ==============================
+   全局基础样式（严格按规范）
+============================== */
+page {
+  background-color: #F7F8FA;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+
+.container {
+  padding: 0;
+}
+
+/* 加载状态 */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300rpx;
+  color: #86909C;
+  font-size: 28rpx;
+}
+
+/* 主内容 */
+.main-content {
+  padding: 24rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+/* ==============================
+   区块卡片（全局统一）
+============================== */
+.section {
+  background: #fff;
+  border-radius: 16rpx;
+  border: 1rpx solid #E5E6EB;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  padding: 32rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1D2129;
+}
+
+/* ==============================
+   订单摘要
+============================== */
+.order-number {
+  font-size: 24rpx;
+  color: #86909C;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #FAFAFA;
+  border-radius: 12rpx;
+}
+
+.item-image {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 12rpx;
+  background: #F5F7FA;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.item-image image {
+  width: 100%;
+  height: 100%;
+}
+
+.no-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  color: #86909C;
+}
+
+.item-info {
+  flex: 1;
+  margin-left: 16rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.item-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #1D2129;
+}
+
+.item-sku {
+  font-size: 22rpx;
+  color: #86909C;
+}
+
+.item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6rpx;
+}
+
+.item-qty {
+  font-size: 24rpx;
+  color: #86909C;
+}
+
+.item-price {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1D2129;
+}
+
+/* 价格汇总 */
+.order-totals {
+  border-top: 1rpx solid #E5E6EB;
+  padding-top: 24rpx;
+  margin-top: 8rpx;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 44rpx;
+}
+
+.total-label {
+  font-size: 26rpx;
+  color: #4E5969;
+}
+
+.total-value {
+  font-size: 26rpx;
+  color: #1D2129;
+}
+
+.total-final {
+  border-top: 1rpx solid #E5E6EB;
+  padding-top: 16rpx;
+  margin-top: 8rpx;
+}
+
+.total-final .total-label {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.total-final .total-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #FF4D4F;
+}
+
+/* ==============================
+   收货地址
+============================== */
+.address-selector {
+  flex: 1;
+  margin-right: 16rpx;
+}
+
+.picker-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F5F7FA;
+  padding: 16rpx 20rpx;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  color: #1D2129;
+  min-height: 44rpx;
+}
+
+.picker-arrow {
+  font-size: 22rpx;
+  color: #86909C;
+}
+
+.add-address-btn {
+  font-size: 26rpx;
+  color: #165DFF;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 地址卡片 */
+.address-card {
+  background: #F5F7FA;
+  border-radius: 12rpx;
+  padding: 24rpx;
+}
+
+.address-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.address-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1D2129;
+}
+
+.address-phone {
+  font-size: 26rpx;
+  color: #4E5969;
+}
+
+.address-detail,
+.address-city {
+  font-size: 26rpx;
+  color: #4E5969;
+  line-height: 1.5;
+}
+
+.address-city {
+  color: #86909C;
+  margin-top: 4rpx;
+}
+
+/* 无地址提示 */
+.no-address-tip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx 20rpx;
+  text-align: center;
+}
+
+.tip-icon {
+  font-size: 60rpx;
+  margin-bottom: 20rpx;
+}
+
+.tip-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1D2129;
+  margin-bottom: 8rpx;
+}
+
+.tip-desc {
+  font-size: 24rpx;
+  color: #86909C;
+  margin-bottom: 32rpx;
+}
+
+.tip-btn {
+  min-height: 44rpx;
+  padding: 0 40rpx;
+  background: #165DFF;
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 500;
+  border-radius: 12rpx;
+  border: none;
+}
+
+/* ==============================
+   配送方式（双列 + 规范样式）
+============================== */
+.loading-shipping {
+  height: 160rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #86909C;
+  font-size: 26rpx;
+}
+
+.shipping-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.shipping-method {
+  width: calc(48% - 10rpx);
+  background: #F5F7FA;
+  border-radius: 12rpx;
+  border: 2rpx solid transparent;
+  padding: 24rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.shipping-method.selected {
+  border-color: #165DFF;
+  background: #EEF2FF;
+}
+
+.shipping-method.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.method-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.method-name {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #1D2129;
+}
+
+.method-price {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #165DFF;
+}
+
+/* 自定义选择框 */
+.custom-checkbox {
+  width: 32rpx;
+  height: 32rpx;
+  border: 2rpx solid #C9CDD4;
+  border-radius: 6rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+}
+
+.custom-checkbox.checked {
+  background: #165DFF;
+  border-color: #165DFF;
+}
+
+.checkbox-icon {
+  font-size: 20rpx;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* ==============================
+   提交按钮
+============================== */
+.submit-section {
+  padding: 16rpx 0;
+  margin-top: 15px;
+}
+
+.submit-btn {
+  width: 100%;
+  min-height: 88rpx;
+  background: #165DFF;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 12rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit-btn.submitting {
+  background: #94BCFF;
+}
+
+/* 清除小程序默认按钮边框 */
+button::after {
+  border: none !important;
+}

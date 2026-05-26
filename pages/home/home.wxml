@@ -34,4 +34,8 @@
       <text>暂无分类数据</text>
     </view>
   </view>
+
+  <view class="order-history-link">
+    <button class="order-btn" bindtap="goToOrderHistory">查看订单历史</button>
+  </view>
 </view>

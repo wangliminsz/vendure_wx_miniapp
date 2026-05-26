@@ -1,0 +1,183 @@
+<view class="container">
+  <view class="loading-state" wx:if="{{isLoading}}">
+    <text>加载中...</text>
+  </view>
+
+
+
+
+  <view class="main-content" wx:else>
+
+
+    <!-- 订单摘要 -->
+    <view class="section order-summary" wx:if="{{activeOrder}}">
+      <view class="section-header">
+        <text class="section-title">订单摘要</text>
+        <text class="order-number" wx:if="{{activeOrder.code}}">订单号: {{activeOrder.code}}</text>
+      </view>
+
+      <view class="order-items">
+        <view class="order-item" wx:for="{{activeOrder.lines}}" wx:key="id">
+          <view class="item-image">
+            <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" />
+            <view wx:else class="no-image">暂无图片</view>
+          </view>
+          <view class="item-info">
+            <text class="item-name">{{item.productVariant.name}}</text>
+            <text class="item-sku" wx:if="{{item.productVariant.sku}}">{{item.productVariant.sku}}</text>
+          </view>
+          <view class="item-right">
+            <text class="item-qty">{{item.quantity}} kg</text>
+            <text class="item-price">{{item.formattedPrice}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="order-totals">
+        <view class="total-row">
+          <text class="total-label">商品小计</text>
+          <text class="total-value">{{orderSummary ? orderSummary.subTotal : ''}}</text>
+        </view>
+        <view class="total-row">
+          <text class="total-label">运费</text>
+          <text class="total-value">{{orderSummary ? orderSummary.shipping : ''}}</text>
+        </view>
+        <view class="total-row total-final">
+          <text class="total-label">合计</text>
+          <text class="total-value">{{orderSummary ? orderSummary.total : ''}}</text>
+        </view>
+      </view>
+    </view>
+
+
+
+    <!-- 确认订单 -->
+    <view class="flex flow-row justify-center">
+
+      <view class="submit-section" wx:if="{{activeOrder && !isExpired}}">
+        <button class="submit-btn {{isConfirming ? 'submitting' : ''}}" bindtap="confirmOrder" disabled="{{isConfirming}}">
+          <text wx:if="{{isConfirming}}">处理中...</text>
+          <text wx:else>确认订单</text>
+        </button>
+        <!-- <view class="submit-tip">
+    <text>支付后，请等待后台处理</text>
+    <text>查询：我的账户 - 购买历史</text>
+  </view> -->
+      </view>
+
+      <view class="submit-section" wx:if="{{activeOrder}}">
+        <button class="submit-btn secondary" bindtap="cancelOrder">
+          <text>取消订单</text>
+        </button>
+      </view>
+
+    </view>
+
+
+    <!-- 账单地址选择区域 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">账单地址</text>
+
+        <view class="address-selector" wx:if="{{addresses.length > 0}}">
+          <picker mode="selector" range="{{addresses}}" range-key="fullName" bindchange="onInvoiceAddressChange" value="{{selectedInvoiceIndex}}">
+            <view class="picker-box">
+              <text>选择地址</text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="add-address-btn" bindtap="goToAddAddress">
+          <text>+ 地址管理</text>
+        </view>
+      </view>
+
+      <!-- 地址卡片 -->
+      <view class="address-card" wx:if="{{hasInvoiceAddress && invoiceAddress}}">
+        <view class="address-info">
+          <view class="address-header">
+            <text class="address-name">{{invoiceAddress.fullName}}</text>
+            <text class="address-phone">{{invoiceAddress.phoneNumber}}</text>
+          </view>
+          <text class="address-detail">{{invoiceAddress.streetLine1}}</text>
+          <text class="address-city">{{invoiceAddress.city}} {{invoiceAddress.province}}</text>
+        </view>
+      </view>
+
+      <!-- 无地址提示 -->
+      <view class="no-address-tip" wx:else>
+        <view class="tip-icon">📍</view>
+        <text class="tip-title">请添加账单地址</text>
+        <text class="tip-desc">点击上方"地址管理"按钮添加您的账单地址</text>
+        <button class="tip-btn" bindtap="goToAddAddress">添加地址</button>
+      </view>
+    </view>
+
+
+    <!-- 支付信息 -->
+    <!-- <view class="section">
+      <view class="section-header">
+        <text class="section-title">支付信息</text>
+      </view>
+
+      <view class="payment-info">
+        <view class="payment-countdown" wx:if="{{!isExpired}}">
+          <view class="countdown-icon">⏱</view>
+          <view class="countdown-content">
+            <text class="countdown-label">支付剩余时间</text>
+            <text class="countdown-time">{{countdownDisplay}}</text>
+          </view>
+        </view>
+
+        <view class="payment-expired" wx:else>
+          <view class="expired-icon">⚠️</view>
+          <view class="expired-content">
+            <text class="expired-title">支付时间已过期</text>
+            <text class="expired-desc">请联系客服处理</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="payment-instructions">
+        <view class="instruction-item">
+          <text class="instruction-num">1</text>
+          <text class="instruction-text">请将订单金额转账至指定账户</text>
+        </view>
+        <view class="instruction-item">
+          <text class="instruction-num">2</text>
+          <text class="instruction-text">转账时请备注订单号: {{activeOrder && activeOrder.code ? activeOrder.code : '________'}}</text>
+        </view>
+        <view class="instruction-item">
+          <text class="instruction-num">3</text>
+          <text class="instruction-text">转账完成后点击下方按钮确认订单</text>
+        </view>
+      </view>
+    </view> -->
+
+    <!-- 客户留言 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">客户留言</text>
+      </view>
+      <textarea class="message-input" placeholder="请输入您的留言（选填）" bindinput="onMessageInput" value="{{customerMessage}}" maxlength="200"></textarea>
+    </view>
+
+
+    <!-- 联系客服 -->
+    <view class="section customer-service">
+      <view class="section-header">
+        <text class="section-title">联系客服</text>
+      </view>
+      <view class="service-info">
+        <text class="service-text">任何未尽事宜，请联系客服确认</text>
+        <!-- <text class="service-contact">客服微信：XXX</text> -->
+      </view>
+    </view>
+    
+
+  </view>
+
+
+
+</view>

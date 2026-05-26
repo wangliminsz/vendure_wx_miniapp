@@ -1,0 +1,55 @@
+<view class="container">
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <view 
+      wx:for="{{filters}}" 
+      wx:key="key"
+      class="filter-item {{currentFilter === item.key ? 'active' : ''}}"
+      bindtap="onFilterTap"
+      data-key="{{item.key}}"
+    >
+      {{item.label}}
+    </view>
+    
+    <view class="sort-btn" bindtap="toggleSortOrder">
+      <text>日期</text>
+      <text class="sort-icon">{{sortOrder === 'desc' ? '↓' : '↑'}}</text>
+    </view>
+  </view>
+
+  <!-- 订单列表 -->
+  <view class="order-list">
+    <!-- 加载中 -->
+    <view wx:if="{{isLoading}}" class="loading">
+      <text>加载中...</text>
+    </view>
+
+    <!-- 无订单 -->
+    <view wx:elif="{{filteredOrders.length === 0}}" class="empty">
+      <text>暂无订单</text>
+    </view>
+
+    <!-- 订单列表 -->
+    <view wx:else class="orders">
+      <view wx:for="{{filteredOrders}}" wx:key="id" class="order-card">
+        <view class="order-header">
+          <text class="order-code">订单号: {{item.code}}</text>
+          <text class="order-state {{item.state}}">{{item.stateLabel}}</text>
+        </view>
+        
+        <view class="order-content">
+          <text class="order-items">{{item.productNames}}</text>
+          <text class="order-count">共{{item.itemCount}}件商品</text>
+        </view>
+
+        <view class="order-footer">
+          <text class="order-date">{{item.formattedDate}}</text>
+          <view class="order-total">
+            <text class="total-label">合计:</text>
+            <text class="total-amount">{{item.formattedTotal}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

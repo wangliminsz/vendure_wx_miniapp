@@ -139,8 +139,7 @@ Page({
 
   async checkLocalCartAndSync() {
     const localItems = wx.getStorageSync('cart_items') || [];
-    if (localItems.length > 0 && app.globalData.isLogin) {
-      this.setData({ syncStatus: '正在同步购物车...' });
+    if (localItems.length > 0 && app.globalData.isLogin) {      this.setData({ syncStatus: '正在同步购物车...' });
       
       for (const item of localItems) {
         await this.addToServerCart(item.variantId, item.quantity);
@@ -365,7 +364,7 @@ Page({
     }
 
     wx.navigateTo({
-      url: '/pages/checkout/checkout',
+      url: '/pages/checkout-shipping/checkout-shipping',
     });
   },
 

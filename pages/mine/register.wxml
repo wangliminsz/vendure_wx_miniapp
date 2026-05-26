@@ -15,40 +15,19 @@
     <!-- 昵称行 -->
     <view class="form-item">
       <text class="form-label">您的昵称</text>
-      <input 
-        value="{{userNickName}}" 
-        type="nickname" 
-        class="form-input" 
-        placeholder="请输入昵称" 
-        placeholder-class="input-placeholder" 
-        bind:change="onNickNameInputChange" 
-      />
+      <input value="{{userNickName}}" type="nickname" class="form-input" placeholder="请输入昵称" placeholder-class="input-placeholder" bind:change="onNickNameInputChange" />
     </view>
 
     <!-- 姓名行 -->
     <view class="form-item">
       <text class="form-label">您的姓名</text>
-      <input 
-        value="{{userName}}" 
-        class="form-input" 
-        placeholder="请输入姓名" 
-        placeholder-class="input-placeholder" 
-        bind:change="onUserNameInputChange" 
-      />
+      <input value="{{userName}}" class="form-input" placeholder="请输入姓名" placeholder-class="input-placeholder" bind:change="onUserNameInputChange" />
     </view>
 
     <!-- 手机号码行 -->
     <view class="form-item">
       <text class="form-label">手机号码</text>
-      <input 
-        value="{{userMobile}}" 
-        type="number" 
-        class="form-input" 
-        placeholder="请输入手机号码" 
-        placeholder-class="input-placeholder" 
-        bind:change="onUserMobileInputChange" 
-        maxlength="11"
-      />
+      <input value="{{userMobile}}" type="number" class="form-input" placeholder="请输入手机号码" placeholder-class="input-placeholder" bind:change="onUserMobileInputChange" maxlength="11" />
     </view>
   </view>
 
@@ -56,11 +35,14 @@
   <view class="agreement-box">
     <checkbox-group bindchange="checkboxChange">
       <label class="agreement-label">
-        <checkbox value="agreed" checked="{{isAgreed}}" color="#165DFF" />
-        <text class="agreement-text">我已阅读并同意</text>
-        <navigator url="/pages/userAgreement/userAgreement" class="agreement-link">《用户服务协议》</navigator>
-        <text>和</text>
-        <navigator url="/pages/privacyPolicy/privacyPolicy" class="agreement-link">《隐私政策》</navigator>
+        <!-- <checkbox value="agreed" checked="{{isAgreed}}" color="#165DFF" /> -->
+        <checkbox value="agreed" checked="{{!!isAgreed}}" 
+          color="#165DFF"
+          />
+          <text class="agreement-text">我已阅读并同意</text>
+          <navigator url="/pages/userAgreement/userAgreement" class="agreement-link">《用户服务协议》</navigator>
+          <text>和</text>
+          <navigator url="/pages/privacyPolicy/privacyPolicy" class="agreement-link">《隐私政策》</navigator>
       </label>
     </checkbox-group>
   </view>

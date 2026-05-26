@@ -3,7 +3,7 @@ const config = require('../../config.js');
 
 Page({
   data: {
-    isAgreed: false, // 微信审核要求
+    isAgreed: false,
     fastapiUrl: config.fastapiUrl,
     userOpenId: '',
     userAvatarUrl: config.avatarImg,

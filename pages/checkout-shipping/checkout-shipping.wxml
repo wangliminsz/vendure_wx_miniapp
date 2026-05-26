@@ -1,0 +1,149 @@
+<view class="container">
+
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{isLoading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 主内容 -->
+  <view class="main-content" wx:else>
+
+    <!-- 订单摘要 -->
+    <view class="section order-summary" wx:if="{{activeOrder}}">
+      <view class="section-header">
+        <text class="section-title">订单摘要</text>
+        <text class="order-number" wx:if="{{activeOrder.code}}">订单号: {{activeOrder.code}}</text>
+      </view>
+
+      <!-- 商品列表 -->
+      <view class="order-items">
+        <view class="order-item" wx:for="{{activeOrder.lines}}" wx:key="id">
+          <view class="item-image">
+            <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" />
+            <view wx:else class="no-image">暂无图片</view>
+          </view>
+          <view class="item-info">
+            <text class="item-name">{{item.productVariant.name}}</text>
+            <text class="item-sku" wx:if="{{item.productVariant.sku}}">{{item.productVariant.sku}}</text>
+          </view>
+          <view class="item-right">
+            <text class="item-qty">{{item.quantity}} kg</text>
+            <text class="item-price">{{item.formattedPrice}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 价格汇总 -->
+      <view class="order-totals">
+        <view class="total-row">
+          <text class="total-label">商品小计</text>
+          <text class="total-value">{{orderSummary ? orderSummary.subTotal : ''}}</text>
+        </view>
+        <view class="total-row">
+          <text class="total-label">运费</text>
+          <text class="total-value">{{orderSummary ? orderSummary.shipping : '待定'}}</text>
+        </view>
+        <view class="total-row total-final">
+          <text class="total-label">合计</text>
+          <text class="total-value">{{orderSummary ? orderSummary.total : ''}}</text>
+        </view>
+      </view>
+    </view>
+
+
+    <!-- 提交按钮 -->
+    <view class="submit-section" wx:if="{{hasShippingAddress && selectedShippingMethod}}">
+      <button class="submit-btn {{isSubmitting ? 'submitting' : ''}}" bindtap="proceedToPayment" disabled="{{isSubmitting}}">
+        <text wx:if="{{isSubmitting}}">处理中...</text>
+        <text wx:else>继 续 ></text>
+      </button>
+    </view>
+
+
+
+
+
+
+
+    <!-- 收货地址选择区域 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">收货地址</text>
+
+        <!-- 地址选择器 -->
+        <view class="address-selector" wx:if="{{addresses.length > 0}}">
+          <picker mode="selector" range="{{addresses}}" range-key="fullName" bindchange="onAddressChange" value="{{selectedIndex}}">
+            <view class="picker-box">
+              <text wx:if="{{selectedAddressId}}">选择地址</text>
+              <text wx:else>选择地址</text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="add-address-btn" bindtap="goToAddAddress">
+          <text>+ 地址管理</text>
+        </view>
+      </view>
+
+      <!-- 地址卡片 -->
+      <view class="address-card" wx:if="{{hasShippingAddress && shippingAddress}}">
+        <view class="address-info">
+          <view class="address-header">
+            <text class="address-name">{{shippingAddress.fullName}}</text>
+            <text class="address-phone">{{shippingAddress.phoneNumber}}</text>
+          </view>
+          <text class="address-detail">{{shippingAddress.streetLine1}}</text>
+          <text class="address-city">{{shippingAddress.city}} {{shippingAddress.province}}</text>
+        </view>
+      </view>
+
+      <!-- 无地址提示 -->
+      <view class="no-address-tip" wx:else>
+        <view class="tip-icon">📍</view>
+        <text class="tip-title">请添加收货地址</text>
+        <text class="tip-desc">点击上方"添加地址"按钮添加您的收货地址</text>
+        <button class="tip-btn" bindtap="goToAddAddress">添加收货地址</button>
+      </view>
+    </view>
+
+    <!-- 配送方式区域 -->
+    <view class="section" wx:if="{{hasShippingAddress}}">
+      <view class="section-header">
+        <text class="section-title">配送方式</text>
+      </view>
+
+      <!-- 加载配送方式 -->
+      <view class="loading-shipping" wx:if="{{!isShippingDataLoaded && eligibleShippingMethods.length === 0}}">
+        <text>加载配送方式中...</text>
+      </view>
+
+      <!-- 配送方式列表 - 双列并排版 -->
+      <view class="shipping-methods" wx:elif="{{eligibleShippingMethods.length > 0}}">
+        <view class="shipping-grid">
+          <view 
+            class="shipping-method {{selectedShippingMethod && selectedShippingMethod.id === item.id ? 'selected' : ''}} {{activeOrder && activeOrder.state !== 'AddingItems' ? 'disabled' : ''}}" 
+            wx:for="{{eligibleShippingMethods}}" 
+            wx:key="id" 
+            data-id="{{item.id}}"
+            bindtap="onShippingMethodSelect"
+          >
+            <!-- 自定义checkbox图标 -->
+            <view class="custom-checkbox {{selectedShippingMethod && selectedShippingMethod.id === item.id ? 'checked' : ''}}">
+              <text class="checkbox-icon">{{selectedShippingMethod && selectedShippingMethod.id === item.id ? '✓' : ''}}</text>
+            </view>
+            <view class="method-content">
+              <text class="method-name">{{item.name}}</text>
+              <text class="method-price">{{item.formattedPrice}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+    </view>
+
+
+
+
+  </view>
+</view>

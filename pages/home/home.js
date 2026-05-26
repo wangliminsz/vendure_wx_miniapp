@@ -28,7 +28,6 @@ Page({
   },
 
   async onLoad() {
-    // 等待应用全局初始化完成 (确保渠道 token 已获取)
     await app.initPromise;
     this.loadCollections();
   },
@@ -52,6 +51,24 @@ Page({
   goToSearch() {
     wx.navigateTo({
       url: '/pages/search/search',
+    });
+  },
+
+  // goToOrderHistory() {
+  //   console.log('pressed---')
+  //   wx.navigateTo({
+  //     url: '/pages/order-history/order-history',
+  //   });
+  // },
+
+  goToOrderHistory() {
+    console.log('pressed---')
+    wx.navigateTo({
+      url: '/pages/order-history/order-history',
+      fail: (err) => {
+        // This will print WHY navigation failed
+        console.error('Jump failed:', err)
+      }
     });
   },
 

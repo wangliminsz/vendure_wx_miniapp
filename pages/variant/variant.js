@@ -420,14 +420,26 @@ Page({
 
       if (activeOrder && activeOrder.state !== 'AddingItems') {
         if (activeOrder.state === 'ArrangingPayment') {
-          this.setData({ addToCartError: '您有待付款订单，请先完成或取消' });
+          wx.showToast({
+            title: '请先确认现有订单（待付款状态）',
+            icon: 'none',
+            duration: 3000
+          });
           return;
         }
         if (activeOrder.state === 'PaymentAuthorized') {
-          this.setData({ addToCartError: '该订单已授权，请创建新的采购车' });
+          wx.showToast({
+            title: '请先确认现有订单（已授权状态）',
+            icon: 'none',
+            duration: 3000
+          });
           return;
         }
-        this.setData({ addToCartError: `订单状态：${activeOrder.state}，无法添加商品` });
+        wx.showToast({
+          title: '订单状态异常，请先处理现有订单',
+          icon: 'none',
+          duration: 3000
+        });
         return;
       }
 
