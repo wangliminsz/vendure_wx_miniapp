@@ -126,12 +126,12 @@
 
 .vendure-status.registered {
   color: #00B42A;
-  background-color: #E6FFEF;
+  /* background-color: #E6FFEF; */
 }
 
 .vendure-status.unregistered {
-  color: #FF7D00;
-  background-color: #FFF7E8;
+  color: #86909C;
+  /* background-color: #FFF7E8; */
 }
 
 /* 按钮组：居中布局 + 规范间距 */

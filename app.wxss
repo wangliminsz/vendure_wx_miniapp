@@ -8,6 +8,13 @@ page {
   background-color: #F2F3F5;
 }
 
+.wx-toast {
+  padding: 20rpx 40rpx !important; /* MORE PADDING */
+  max-width: 80% !important;       /* Bigger width */
+  font-size: 28rpx !important;    /* Text size */
+  border-radius: 12rpx !important;
+}
+
 .flex {
   display: flex;
 }

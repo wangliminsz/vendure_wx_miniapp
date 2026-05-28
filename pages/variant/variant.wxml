@@ -64,7 +64,7 @@
 
 
       <view class="quantity-section">
-        <text class="quantity-label">购买数量 (kg)</text>
+        <text class="quantity-label">采购数量 (kg)</text>
         <view class="quantity-control">
           <view class="quantity-btn minus" bindtap="onMinus">
             <text>-</text>

@@ -1,0 +1,74 @@
+POST {{shopApi}}
+Content-Type: application/json
+X-GraphQL-Method: checkRegisterCode
+
+{
+  "query": "query CheckRegisterCode { checkRegisterCode(code: \"9BDJ\", channelCode: \"Channel_Dsy\") { valid message } }"
+}
+
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: vendure-auth-token
+Content-Language: en
+cache-control: no-store
+Content-Type: application/json; charset=utf-8
+Content-Length: 71
+ETag: W/"47-mvjb0EMMXgFQK7X7MpfCOdTUVX4"
+Date: Wed, 27 May 2026 06:46:54 GMT
+Connection: close
+
+{
+  "data": {
+    "checkRegisterCode": {
+      "valid": true,
+      "message": "验证通过"
+    }
+  }
+}
+
+
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+### -------------------------------------------------------------------------
+### 2. 【小程序前端】解耦的“读”接口：用户输入完 4 位码后，失焦实时查验是否有效
+### -------------------------------------------------------------------------
+# 🎯 请把下面的 code 替换为第 1 步里实际生成的 4 位大写字母
+POST {{shopApi}}
+Content-Type: application/json
+X-GraphQL-Method: checkRegisterCode
+
+{
+  "query": "query CheckRegisterCode { checkRegisterCode(code: \"SE5P\", channelCode: \"Channel_Dsy\") { valid message } }"
+}
+### 💡 运行后预期：
+# 第一次查验时，应该返回：{ "valid": true, "message": "验证通过" }
+
+
+### -------------------------------------------------------------------------
+### 3. 【小程序前端】解耦的“写”接口：输入正确的验证码，一气呵成核销并落户注册
+### -------------------------------------------------------------------------
+# 🎯 请把下面的 verifyCode 替换为第 1 步生成的邀请码
+### 3. 【小程序前端】使用标准 JSON 格式发起核销与落户注册
+POST {{shopApi}}
+Content-Type: application/json
+X-GraphQL-Method: registerWithAuthCode
+vendure-token: the-channel-token-for-channel-dsy
+
+{
+  "query": "mutation RegisterWithAuthCode { registerWithAuthCode(openId: \"wx_oauth_demo_user_001\", verifyCode: \"9BDJ\", nickname: \"fromVscode\", phoneNumber: \"13800138000\") { id identifier authenticationMethods { strategy } } }"
+}
+### 💡 运行后预期：
+# 系统会成功为你创建并在 Postgres 里面落户这个虚拟用户，返回它的用户 ID。
+# 同时，底层的 channel_auth_code 表中该码的状态会自动被洗成 1（已使用），且 openid 锁定为 "wx_oauth_demo_user_001"。

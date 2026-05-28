@@ -19,8 +19,8 @@ class GraphQLClient {
 
     const channelToken = app.globalData.activeChannelToken;
     if (channelToken) {
-      console.log ('--------------vendure-token in homepage=', channelToken )
-      console.log ('--------------vendure-token in homepage=', channelToken)
+      // console.log ('--------------vendure-token in homepage=', channelToken )
+      // console.log ('--------------vendure-token in homepage=', channelToken)
       headers['vendure-token'] = channelToken;
     }
 
@@ -35,11 +35,11 @@ class GraphQLClient {
       queryString = String(query);
     }
 
-    console.log('GraphQL Request:', {
-      url: this.apiUrl,
-      query: queryString.substring(0, 100) + '...',
-      variables: JSON.stringify(variables),
-    });
+    // console.log('GraphQL Request:', {
+    //   url: this.apiUrl,
+    //   query: queryString.substring(0, 100) + '...',
+    //   variables: JSON.stringify(variables),
+    // });
 
     return new Promise((resolve, reject) => {
       wx.request({
@@ -51,9 +51,9 @@ class GraphQLClient {
           variables: variables || {},
         }),
         success: (res) => {
-          console.log('GraphQL Response Status:', res.statusCode);
-          console.log('GraphQL Response Headers:', res.header);
-          console.log('GraphQL Response Data:', res.data);
+          // console.log('GraphQL Response Status:', res.statusCode);
+          // console.log('GraphQL Response Headers:', res.header);
+          // console.log('GraphQL Response Data:', res.data);
           
           const result = res.data;
 

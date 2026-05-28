@@ -30,8 +30,9 @@
           <view class="right-actions">
             <!-- Vendure用户注册状态 -->
             <view wx:if="{{userNickName}}">
-              <view class="vendure-status {{isLogin ? 'registered' : 'unregistered'}}">
-                <text wx:if="{{isLogin}}">✅ 已登录</text>
+              <view class="vendure-status {{isLogin ? 'unregistered' : 'unregistered'}}">
+                <!-- <text wx:if="{{isLogin}}">✅ 已登录</text> -->
+                <text wx:if="{{isLogin}}" bindtap="unbindAccount">解除绑定</text>
                 <text wx:else bindtap="updateUserInfo2">点击注册</text>
               </view>
             </view>
@@ -39,7 +40,7 @@
             <!-- 新增：地址管理入口（仅已登录显示） -->
             <view wx:if="{{isLogin}}" class="address-entry" bindtap="goToAddress">
               <!-- 线性地址图标 + 文字 -->
-              <view class="address-icon">📍</view>
+              <!-- <view class="address-icon">📍</view> -->
               <text class="address-text">地址管理</text>
             </view>
           </view>

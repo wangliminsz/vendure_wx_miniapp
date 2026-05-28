@@ -59,8 +59,29 @@ page {
   font-size: 30rpx;
   font-weight: 500;
   color: #1D2129;
+  /* width: 180rpx; */
+  flex-shrink: 0;
+}
+
+.form-label-blue {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #1D2129;
   width: 180rpx;
   flex-shrink: 0;
+}
+
+.form-label-wrap {
+  display: flex;
+  align-items: center;
+  width: 180rpx;
+  flex-shrink: 0;
+}
+
+.required-mark {
+  color: #F53F3F;
+  font-size: 28rpx;
+  margin-left: 5rpx;
 }
 
 /* 输入框：统一右对齐，宽度一致 */

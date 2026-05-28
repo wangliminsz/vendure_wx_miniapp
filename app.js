@@ -24,18 +24,29 @@ App({
   initPromise: null,
 
   async onLaunch(options) {
+
     // 立即创建 initPromise (确保页面不会访问 undefined)
     let resolveInitPromise;
     this.initPromise = new Promise(resolve => {
       resolveInitPromise = resolve;
     });
 
+    // 处理未捕获的 Promise 错误
+    wx.onUnhandledRejection((res) => {
+      console.error('Unhandled Promise Rejection:', res);
+      // 可以选择上报错误或忽略
+      if (res && res.reason) {
+        console.error('错误原因:', res.reason);
+      }
+    });
+
     // 2026-05-23 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    console.log("2026-05-23 ======= 微信的参数：", options.query);
+    // console.log("2026-05-23 ======= 微信的参数：", options.query);
 
     // 1. 安全获取渠道 code
     let channelCode = "__default_channel__";
+
     if (options && options.query && options.query.channel) {
       channelCode = options.query.channel;
     }
@@ -136,11 +147,11 @@ App({
 
     // ---- 步骤 1：本地有 Token，优先验证有效性 ----
     if (token) {
-      console.log('【步骤 1】本地发现旧 Token，正在向后端验证有效性...');
+      console.log('【步骤 1】本地发现旧 Token ➡️正在向后端验证有效性...');
       const isValid = await this.verifyToken(token);
 
       if (isValid) {
-        console.log('【步骤 1-成功】Token 依然有效，老用户免密进入首页');
+        console.log('【步骤 1-成功】Token 依然有效 ➡️老用户免密进入首页');
         this.setLoginStatus(true);
         return {
           isLogin: true,
@@ -148,7 +159,7 @@ App({
         };
       }
 
-      console.log('【步骤 1-失效】Token 已失效或过期，清理旧缓存，准备走 OpenID 检查机制');
+      console.log('【步骤 1-失效】Token 已失效或过期，清理旧缓存 ➡️准备走 OpenID 检查机制');
       wx.removeStorageSync('vendure-auth-token');
     }
 
@@ -157,7 +168,7 @@ App({
     const openid = await this.getWechatOpenId();
 
     if (!openid) {
-      console.error('【步骤 2-异常】未拉取到有效的 OpenID，无法判定注册状态');
+      console.error('【步骤 2-异常】未拉取到有效的 OpenID ➡️无法判定注册状态');
       this.globalData.isLogin = false;
       return {
         isLogin: false
@@ -169,7 +180,7 @@ App({
     const isRegisteredUser = await this.checkAndLoginWithVendure(openid);
 
     if (isRegisteredUser) {
-      console.log('【步骤 3-A】该用户已注册过，静默登录成功，Token 刷新。');
+      console.log('【步骤 3-A】该用户已注册过，静默登录成功 ➡️Token 刷新。');
       this.setLoginStatus(true);
       return {
         isLogin: true,
@@ -232,7 +243,7 @@ App({
       wx.login({
         success: (res) => {
           if (res.code) {
-            console.log("微信临时登录凭证 code 换取成功:", res.code);
+            console.log("1 微信临时 code 成功 -------->", res.code);
             wx.request({
               url: `${config.fastapiUrl}/api/checkYcgpLoginStatus`,
               method: 'POST',
@@ -242,6 +253,7 @@ App({
               success: (backendRes) => {
                 const fetchedOpenid = backendRes.data?.openid;
                 if (fetchedOpenid) {
+                  console.log('2 FastAPI 换取 Openid 成功 --------->');
                   wx.setStorageSync('openid', fetchedOpenid);
                   this.globalData.openid = fetchedOpenid;
 
@@ -362,32 +374,6 @@ App({
       console.error('获取设备屏幕尺寸失败', e);
     }
   },
-
-  // async login(code) {
-  //   try {
-  //     const response = await wx.request({
-  //       url: `${config.production.API_URL}/auth/authentication`,
-  //       method: 'POST',
-  //       header: {
-  //         'Content-Type': 'application/json',
-  //         'vendure-token': config.CHANNEL_TOKEN,
-  //       },
-  //       data: {
-  //         method: 'native',
-  //         mobileNumber: code,
-  //       },
-  //     });
-
-  //     if (response.data.token) {
-  //       wx.setStorageSync('vendure_token', response.data.token);
-  //       this.globalData.token = response.data.token;
-  //       return response.data;
-  //     }
-  //   } catch (error) {
-  //     console.error('Native login failed:', error);
-  //     return null;
-  //   }
-  // },
 
   // ~~~~~~~~~~~~~~~~~~~~ 购物车核心数据驱动方法 ~~~~~~~~~~~~~~~~~~~~
 
@@ -527,6 +513,10 @@ App({
         index: 3,
       });
     }
+  },
+
+  updateMineInfo() {
+    console.log('updateMineInfo -----');
   },
 
   async syncServerCartCount() {

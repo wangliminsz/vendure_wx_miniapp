@@ -20,14 +20,29 @@
 
     <!-- 姓名行 -->
     <view class="form-item">
-      <text class="form-label">您的姓名</text>
+      <view class="form-label-wrap">
+        <text class="form-label">您的姓名</text>
+        <text class="required-mark">*</text>
+      </view>
       <input value="{{userName}}" class="form-input" placeholder="请输入姓名" placeholder-class="input-placeholder" bind:change="onUserNameInputChange" />
     </view>
 
     <!-- 手机号码行 -->
     <view class="form-item">
-      <text class="form-label">手机号码</text>
+      <view class="form-label-wrap">
+        <text class="form-label">手机号码</text>
+        <text class="required-mark">*</text>
+      </view>
       <input value="{{userMobile}}" type="number" class="form-input" placeholder="请输入手机号码" placeholder-class="input-placeholder" bind:change="onUserMobileInputChange" maxlength="11" />
+    </view>
+
+    <!-- 4位校验码行 - 仅新用户注册时显示 -->
+    <view wx:if="{{!isLogin}}" class="form-item">
+      <view class="form-label-wrap">
+        <text class="form-label">4 位校验码</text>
+        <text class="required-mark">*</text>
+      </view>
+      <input value="{{verifyCode}}" type="text" class="form-input" placeholder="请输入 4 位校验码" placeholder-class="input-placeholder" bind:change="onVerifyCodeInputChange" maxlength="4" />
     </view>
   </view>
 
@@ -48,5 +63,5 @@
   </view>
 
   <!-- 提交按钮 -->
-  <button class="submit-btn" bindtap="bindSubmit" disabled="{{!isAgreed}}">提交信息</button>
+  <button class="submit-btn" bindtap="submitForm" disabled="{{!isAgreed}}">提交信息</button>
 </view>
